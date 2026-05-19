@@ -1,0 +1,35 @@
+# Vercel Ignore File
+# Only deploy the Next.js app, ignore everything else
+
+# Development files
+.env.local
+.env*.local
+
+# Documentation
+*.md
+!README.md
+
+# IDE
+.vscode
+.idea
+
+# Git
+.git
+.gitignore
+
+# Node
+node_modules
+
+# Build artifacts (will be rebuilt)
+.next
+out
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
