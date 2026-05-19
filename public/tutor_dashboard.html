@@ -1,0 +1,2295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NurseFiti Kenya — Expert Tutor Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════
+   DESIGN TOKENS — same platform palette, tutor-elevated
+═══════════════════════════════════════════════ */
+:root{
+  /* Core brand (identical to student) */
+  --teal:#08514F;--teal-mid:#0A6865;--teal-light:#E8F5F4;--teal-xlight:#F0FAF9;
+  --amber:#F5A623;--amber-light:#FFF3DC;--amber-dark:#C47F0A;
+  --cream:#FFFDF8;--dark:#0F1C1C;--dark-mid:#1E3535;--dark-soft:#2D4A4A;
+  --mid:#4A6565;--light:#7A9E9E;--border:#D0E6E5;
+  --white:#FFFFFF;--red:#E84545;--green:#1A9E75;--green-light:#DFFBF1;
+
+  /* Tutor-specific sidebar — deep teal gradient, premium */
+  --sb-bg:linear-gradient(175deg,#061412 0%,#0A2322 45%,#0F3030 100%);
+  --sb-border:rgba(8,104,101,.35);
+  --sb-active-bg:rgba(245,166,35,.12);
+  --sb-active-border:var(--amber);
+  --sb-text:rgba(255,255,255,.58);
+  --sb-label:rgba(255,255,255,.25);
+
+  /* Main canvas — warm off-white */
+  --main-bg:#F2F7F7;--card-bg:#FFFFFF;
+  --topbar-bg:rgba(255,255,255,.96);
+
+  /* Tutor accent — amber is PRIMARY, teal is secondary */
+  --accent:var(--amber);--accent-dark:var(--amber-dark);
+
+  --ff-head:'Syne',sans-serif;--ff-body:'Nunito',sans-serif;
+  --shadow:0 4px 24px rgba(8,81,79,.09);
+  --shadow-md:0 8px 32px rgba(8,81,79,.14);
+  --shadow-lg:0 16px 56px rgba(8,81,79,.18);
+  --r:12px;--r-sm:8px;--r-lg:20px;--r-xl:28px;--r-full:999px;
+
+  /* Verification tiers */
+  --verify-gold:linear-gradient(135deg,#F5A623,#E8920A);
+  --verify-silver:linear-gradient(135deg,#8AA0A2,#6B8688);
+}
+
+/* Dark Mode */
+body.dark{
+  --main-bg:#070F0F;--card-bg:#0F1C1C;
+  --topbar-bg:rgba(15,28,28,.97);
+  --border:#1A3535;--white:#0F1C1C;
+  --dark:#E8F5F4;--dark-mid:#C0DCDC;
+  --mid:#6A9898;--light:#3A6060;
+  --cream:#0A1515;--teal-light:rgba(8,81,79,.3);
+  --teal-xlight:rgba(8,81,79,.18);
+  --amber-light:rgba(245,166,35,.14);
+  --green-light:rgba(26,158,117,.14);
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+  --shadow-md:0 8px 32px rgba(0,0,0,.5);
+}
+body.dark .card,body.dark .stat-card,body.dark .schedule-cell.empty{
+  background:var(--card-bg);border-color:var(--border);
+}
+
+/* ═══════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:16px;scroll-behavior:smooth;}
+body{font-family:var(--ff-body);background:var(--main-bg);color:var(--dark);line-height:1.6;overflow-x:hidden;transition:background .25s,color .25s;}
+h1,h2,h3,h4,h5{font-family:var(--ff-head);line-height:1.15;}
+a{text-decoration:none;color:inherit;}
+button{font-family:var(--ff-body);cursor:pointer;}
+input,select,textarea{font-family:var(--ff-body);}
+
+/* ═══════════════════════════════════════════════
+   LAYOUT SHELL
+═══════════════════════════════════════════════ */
+.app-shell{display:flex;min-height:100vh;}
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR — premium deep teal
+═══════════════════════════════════════════════ */
+.sidebar{
+  width:252px;min-width:252px;
+  background:var(--sb-bg);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:200;
+  overflow-y:auto;overflow-x:hidden;
+  border-right:1px solid var(--sb-border);
+}
+/* subtle grain texture on sidebar */
+.sidebar::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:.6;border-radius:0;
+}
+.sidebar-top{padding:22px 20px 0;position:relative;}
+.sidebar-logo{
+  display:flex;align-items:center;gap:10px;margin-bottom:20px;
+}
+.logo-mark{
+  width:36px;height:36px;background:var(--teal);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  box-shadow:0 4px 12px rgba(8,81,79,.4);
+}
+.logo-mark svg{width:20px;height:20px;fill:none;stroke:var(--amber);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.logo-text{font-family:var(--ff-head);font-size:18px;font-weight:800;color:#fff;}
+.logo-text span{color:var(--amber);}
+.logo-badge{
+  font-size:8px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  background:rgba(245,166,35,.2);color:var(--amber);
+  border:1px solid rgba(245,166,35,.3);border-radius:var(--r-full);
+  padding:2px 8px;display:block;margin-top:2px;width:fit-content;
+}
+
+/* Tutor Profile Block */
+.sidebar-profile{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--r-lg);padding:16px;margin-bottom:6px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  position:relative;
+}
+.tutor-avatar{
+  width:62px;height:62px;border-radius:50%;
+  background:linear-gradient(135deg,var(--teal-mid),var(--teal));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-head);font-size:20px;font-weight:800;color:var(--amber);
+  border:3px solid rgba(245,166,35,.4);
+  box-shadow:0 0 0 6px rgba(245,166,35,.08);flex-shrink:0;
+}
+.tutor-info{text-align:center;}
+.tutor-name{font-family:var(--ff-head);font-size:14px;font-weight:800;color:#fff;}
+.tutor-title{font-size:11px;color:rgba(255,255,255,.5);margin-top:1px;}
+.verify-chip{
+  display:inline-flex;align-items:center;gap:4px;
+  background:var(--verify-gold);color:var(--dark);
+  font-size:9px;font-weight:800;padding:3px 9px;border-radius:var(--r-full);
+  letter-spacing:.05em;text-transform:uppercase;margin-top:4px;
+}
+.online-dot{position:absolute;top:20px;right:20px;}
+.online-dot span{
+  display:block;width:10px;height:10px;background:#25D366;border-radius:50%;
+  box-shadow:0 0 0 3px rgba(37,211,102,.2);
+  animation:pulse-dot 2s infinite;
+}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 3px rgba(37,211,102,.2);}50%{box-shadow:0 0 0 6px rgba(37,211,102,.06);}}
+
+.earnings-strip{
+  display:flex;gap:8px;margin-top:4px;
+}
+.es-item{
+  flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--r-sm);padding:8px 10px;text-align:center;
+}
+.es-val{font-family:var(--ff-head);font-size:14px;font-weight:800;color:var(--amber);}
+.es-label{font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;margin-top:1px;}
+
+/* Nav */
+.sidebar-nav{padding:8px 12px;flex:1;}
+.nav-label{
+  font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--sb-label);padding:10px 8px 4px;
+}
+.sidebar-nav a{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 12px;border-radius:var(--r);
+  font-size:13px;font-weight:700;color:var(--sb-text);
+  cursor:pointer;transition:all .18s;
+  border-left:2.5px solid transparent;margin-bottom:2px;
+  position:relative;
+}
+.sidebar-nav a svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.7;transition:.18s;}
+.sidebar-nav a:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85);}
+.sidebar-nav a:hover svg{opacity:1;}
+.sidebar-nav a.active{
+  background:var(--sb-active-bg);color:var(--amber);
+  border-left-color:var(--amber);
+}
+.sidebar-nav a.active svg{opacity:1;stroke:var(--amber);}
+.nav-badge{
+  margin-left:auto;background:var(--red);color:#fff;
+  font-size:9px;font-weight:800;padding:2px 6px;border-radius:var(--r-full);
+}
+.nav-new{
+  margin-left:auto;background:rgba(245,166,35,.2);color:var(--amber);
+  font-size:9px;font-weight:800;padding:2px 7px;border-radius:var(--r-full);
+}
+
+/* Rating Stars */
+.sidebar-rating{
+  margin:4px 12px 0;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);border-radius:var(--r);padding:12px 14px;
+}
+.sr-stars{display:flex;gap:2px;margin-bottom:6px;}
+.sr-stars span{font-size:14px;color:var(--amber);}
+.sr-text{font-size:11px;color:rgba(255,255,255,.5);}
+.sr-count{font-family:var(--ff-head);font-size:18px;font-weight:800;color:#fff;}
+.sr-bottom{display:flex;align-items:baseline;gap:6px;margin-top:2px;}
+
+/* Status toggle */
+.availability-toggle{
+  margin:10px 12px 12px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--r);padding:10px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.avail-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.65);}
+.avail-status{font-size:11px;font-weight:700;color:#25D366;}
+.avail-toggle-track{
+  width:36px;height:20px;background:#25D366;border-radius:var(--r-full);
+  position:relative;cursor:pointer;transition:background .2s;
+}
+.avail-toggle-track.off{background:rgba(255,255,255,.2);}
+.avail-toggle-track::after{
+  content:'';width:15px;height:15px;background:#fff;border-radius:50%;
+  position:absolute;top:2.5px;left:18px;transition:transform .2s;
+  box-shadow:0 1px 4px rgba(0,0,0,.25);
+}
+.avail-toggle-track.off::after{transform:translateX(-14px);}
+
+/* ═══════════════════════════════════════════════
+   MAIN AREA
+═══════════════════════════════════════════════ */
+.main-area{margin-left:252px;flex:1;display:flex;flex-direction:column;min-height:100vh;}
+
+/* ═══════════════════════════════════════════════
+   TOPBAR
+═══════════════════════════════════════════════ */
+.topbar{
+  background:var(--topbar-bg);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  height:64px;padding:0 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;transition:background .25s;
+}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.page-breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mid);}
+.page-breadcrumb strong{color:var(--dark);font-weight:800;font-size:15px;}
+.page-breadcrumb svg{width:14px;height:14px;stroke:var(--border);fill:none;}
+.tutor-portal-badge{
+  display:flex;align-items:center;gap:6px;
+  background:linear-gradient(135deg,var(--amber-light),#FFF8E8);
+  border:1px solid rgba(245,166,35,.3);border-radius:var(--r-full);
+  padding:5px 12px;font-size:11px;font-weight:800;color:var(--amber-dark);
+  letter-spacing:.04em;text-transform:uppercase;
+}
+.tutor-portal-badge::before{content:'⭐';font-size:11px;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-stat{
+  display:flex;align-items:center;gap:7px;
+  background:var(--teal-light);border:1px solid rgba(8,81,79,.15);
+  border-radius:var(--r-full);padding:6px 14px;
+}
+.topbar-stat svg{width:15px;height:15px;stroke:var(--teal);stroke-width:2;fill:none;}
+.topbar-stat span{font-size:12px;font-weight:800;color:var(--teal);}
+.icon-btn{
+  width:38px;height:38px;background:transparent;border:1.5px solid var(--border);
+  border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .18s;position:relative;
+}
+.icon-btn:hover{border-color:var(--teal);background:var(--teal-light);}
+.icon-btn svg{width:17px;height:17px;fill:none;stroke:var(--mid);stroke-width:2;stroke-linecap:round;}
+.notif-dot{
+  position:absolute;top:6px;right:6px;width:7px;height:7px;
+  background:var(--red);border-radius:50%;border:1.5px solid var(--card-bg);
+}
+.dark-btn{
+  display:flex;align-items:center;gap:7px;
+  background:var(--teal-light);border:1px solid var(--border);
+  border-radius:var(--r-full);padding:6px 12px;cursor:pointer;
+  font-size:12px;font-weight:700;color:var(--teal);transition:.18s;
+}
+.dark-btn:hover{background:var(--teal);color:#fff;}
+.toggle-track{width:26px;height:14px;background:var(--border);border-radius:var(--r-full);position:relative;margin-left:4px;}
+.toggle-thumb{width:10px;height:10px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+body.dark .toggle-track{background:var(--teal);}
+body.dark .toggle-thumb{transform:translateX(12px);}
+body.dark .dark-btn{color:var(--teal-light);}
+.topbar-avatar{
+  width:38px;height:38px;background:linear-gradient(135deg,var(--teal),var(--teal-mid));
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-head);font-size:13px;font-weight:800;color:var(--amber);
+  cursor:pointer;border:2px solid rgba(245,166,35,.3);
+}
+
+/* ═══════════════════════════════════════════════
+   CONTENT
+═══════════════════════════════════════════════ */
+.content{padding:28px;flex:1;}
+.view{display:none;animation:fadeSlide .35s ease;}
+.view.active{display:block;}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+/* ═══════════════════════════════════════════════
+   SHARED COMPONENTS
+═══════════════════════════════════════════════ */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px;}
+.page-header-left h1{font-size:22px;font-weight:800;color:var(--dark);}
+.page-header-left p{font-size:13px;color:var(--mid);margin-top:3px;}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;transition:background .25s,border-color .25s;}
+.card-sm{padding:16px 20px;}
+.card-title{font-family:var(--ff-head);font-size:15px;font-weight:800;color:var(--dark);}
+.card-sub{font-size:12px;color:var(--mid);margin-top:2px;}
+.stat-card{
+  background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:20px;transition:all .2s;
+}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.stat-icon{
+  width:44px;height:44px;border-radius:var(--r-sm);
+  display:flex;align-items:center;justify-content:center;margin-bottom:12px;
+}
+.stat-icon svg{width:22px;height:22px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.si-amber{background:var(--amber-light);} .si-amber svg{stroke:var(--amber-dark);}
+.si-teal{background:var(--teal-light);} .si-teal svg{stroke:var(--teal);}
+.si-green{background:var(--green-light);} .si-green svg{stroke:var(--green);}
+.si-red{background:#FFE8E8;} .si-red svg{stroke:var(--red);}
+.stat-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);}
+.stat-value{font-family:var(--ff-head);font-size:28px;font-weight:800;color:var(--dark);margin-top:4px;}
+.stat-delta{font-size:12px;font-weight:700;margin-top:2px;}
+.up{color:var(--green);} .down{color:var(--red);}
+
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--ff-body);font-weight:700;font-size:13px;
+  padding:10px 20px;border-radius:var(--r-full);border:none;cursor:pointer;transition:all .2s;
+}
+.btn-amber{background:var(--amber);color:var(--dark);}
+.btn-amber:hover{background:var(--amber-dark);color:#fff;transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,166,35,.35);}
+.btn-teal{background:var(--teal);color:#fff;}
+.btn-teal:hover{background:var(--teal-mid);transform:translateY(-1px);}
+.btn-outline{background:transparent;border:2px solid var(--teal);color:var(--teal);}
+.btn-outline:hover{background:var(--teal);color:#fff;}
+.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--mid);}
+.btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
+.btn-sm{font-size:12px;padding:7px 16px;}
+.btn-danger{background:#FFE8E8;color:var(--red);border:1.5px solid rgba(232,69,69,.2);}
+
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--r-full);}
+.tag-amber{background:var(--amber-light);color:var(--amber-dark);}
+.tag-teal{background:var(--teal-light);color:var(--teal);}
+.tag-green{background:var(--green-light);color:#0F6E56;}
+.tag-red{background:#FFE8E8;color:#C0392B;}
+.tag-purple{background:#F0EAFF;color:#6D28D9;}
+.tag-gray{background:var(--teal-xlight);color:var(--mid);}
+
+.prog-track{width:100%;height:7px;background:var(--border);border-radius:var(--r-full);overflow:hidden;}
+.prog-fill{height:100%;border-radius:var(--r-full);}
+.pf-amber{background:var(--amber);}
+.pf-teal{background:var(--teal);}
+.pf-green{background:var(--green);}
+.pf-red{background:var(--red);}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.grid-aside{display:grid;grid-template-columns:1fr 300px;gap:20px;}
+.grid-aside-lg{display:grid;grid-template-columns:1fr 340px;gap:20px;}
+
+.divider{height:1px;background:var(--border);margin:16px 0;}
+
+/* ── Input fields ── */
+.field-group{margin-bottom:16px;}
+.field-label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:6px;display:block;}
+.field-input{
+  width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--r);
+  font-size:14px;color:var(--dark);background:var(--card-bg);outline:none;transition:.15s;
+}
+.field-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(8,81,79,.08);}
+body.dark .field-input{background:var(--main-bg);color:var(--dark);}
+
+/* ═══════════════════════════════════════════════
+   VIEW 1 — HOME / OVERVIEW
+═══════════════════════════════════════════════ */
+/* Welcome hero — asymmetric, premium */
+.welcome-hero{
+  background:linear-gradient(135deg,var(--dark) 0%,#0F3535 40%,var(--teal-mid) 100%);
+  border-radius:var(--r-xl);padding:32px 36px;
+  display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;
+  margin-bottom:20px;position:relative;overflow:hidden;
+}
+.welcome-hero::before{
+  content:'';position:absolute;top:-60px;right:160px;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(245,166,35,.1) 0%,transparent 70%);
+  pointer-events:none;
+}
+.welcome-hero::after{
+  content:'';position:absolute;bottom:-80px;left:-40px;
+  width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(8,104,101,.3) 0%,transparent 70%);
+  pointer-events:none;
+}
+.wh-left{position:relative;z-index:1;}
+.wh-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(245,166,35,.15);border:1px solid rgba(245,166,35,.25);
+  border-radius:var(--r-full);padding:5px 12px;
+  font-size:11px;font-weight:800;color:var(--amber);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;
+}
+.wh-eyebrow span{width:7px;height:7px;background:var(--amber);border-radius:50%;animation:pulse-amber 1.8s infinite;}
+@keyframes pulse-amber{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.4);}}
+.wh-left h2{font-size:26px;font-weight:800;color:#fff;margin-bottom:8px;}
+.wh-left p{font-size:14px;color:rgba(255,255,255,.65);margin-bottom:20px;max-width:480px;}
+.wh-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.wh-right{position:relative;z-index:1;}
+
+/* Today's sessions card in hero */
+.today-sessions-mini{
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:var(--r-lg);padding:18px 20px;min-width:220px;
+  backdrop-filter:blur(8px);
+}
+.tsm-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:12px;}
+.tsm-session{
+  display:flex;align-items:center;gap:10px;padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.tsm-session:last-child{border-bottom:none;}
+.tsm-time{
+  font-family:var(--ff-head);font-size:12px;font-weight:800;
+  color:var(--amber);min-width:46px;
+}
+.tsm-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.dot-live{background:#25D366;}
+.dot-upcoming{background:var(--amber);}
+.dot-done{background:rgba(255,255,255,.25);}
+.tsm-info{}
+.tsm-name{font-size:12px;font-weight:700;color:#fff;}
+.tsm-meta{font-size:10px;color:rgba(255,255,255,.45);}
+.tsm-empty{font-size:13px;color:rgba(255,255,255,.5);text-align:center;padding:12px 0;}
+
+/* Quick stat grid */
+.quick-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+
+/* Main content row */
+.home-main-grid{display:grid;grid-template-columns:1fr 1fr 300px;gap:20px;}
+
+/* Session queue card */
+.session-queue{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;}
+.sq-item{
+  display:flex;align-items:center;gap:12px;padding:12px 0;
+  border-bottom:1px solid var(--border);
+}
+.sq-item:last-child{border-bottom:none;}
+.sq-avatar{
+  width:38px;height:38px;border-radius:50%;background:var(--teal-light);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-head);font-size:13px;font-weight:800;color:var(--teal);
+  flex-shrink:0;
+}
+.sq-info{flex:1;}
+.sq-name{font-size:14px;font-weight:700;color:var(--dark);}
+.sq-detail{font-size:11px;color:var(--mid);}
+.sq-time{
+  font-family:var(--ff-head);font-size:12px;font-weight:800;
+  color:var(--teal);background:var(--teal-light);
+  padding:4px 10px;border-radius:var(--r-full);white-space:nowrap;
+}
+.sq-status{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.live-badge{
+  background:#25D366;color:#fff;font-size:9px;font-weight:800;
+  padding:3px 8px;border-radius:var(--r-full);text-transform:uppercase;
+  letter-spacing:.05em;animation:live-pulse 1.5s infinite;
+}
+@keyframes live-pulse{0%,100%{opacity:1;}50%{opacity:.7;}}
+
+/* Student performance mini */
+.student-perf-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;}
+.sp-row{
+  display:flex;align-items:center;gap:12px;padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
+.sp-row:last-child{border-bottom:none;}
+.sp-ava{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-head);font-size:11px;font-weight:800;flex-shrink:0;
+}
+.sp-name{font-size:13px;font-weight:700;color:var(--dark);flex:1;}
+.sp-score{font-family:var(--ff-head);font-size:14px;font-weight:800;}
+.sp-trend{font-size:11px;font-weight:700;}
+.sp-bar-wrap{width:80px;}
+
+/* Earnings snapshot */
+.earnings-snapshot{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;}
+.es-chart{
+  display:flex;align-items:flex-end;gap:6px;height:80px;margin:16px 0;
+}
+.es-bar-col{display:flex;flex-direction:column;align-items:center;flex:1;gap:4px;height:100%;}
+.es-bar{
+  width:100%;border-radius:4px 4px 0 0;background:var(--teal-light);
+  transition:background .2s;min-height:4px;cursor:pointer;
+}
+.es-bar:hover{background:var(--amber);}
+.es-bar.best{background:var(--amber);}
+.es-day{font-size:9px;color:var(--mid);font-weight:700;}
+.es-total{font-family:var(--ff-head);font-size:28px;font-weight:800;color:var(--dark);}
+.es-period{font-size:12px;color:var(--mid);}
+.es-payout-btn{
+  width:100%;padding:10px;border-radius:var(--r);
+  background:var(--amber-light);border:1.5px solid rgba(245,166,35,.3);
+  font-size:13px;font-weight:700;color:var(--amber-dark);
+  cursor:pointer;margin-top:12px;transition:.15s;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.es-payout-btn:hover{background:var(--amber);color:var(--dark);}
+.es-payout-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ═══════════════════════════════════════════════
+   VIEW 2 — SCHEDULE / AVAILABILITY
+═══════════════════════════════════════════════ */
+.schedule-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;}
+.schedule-main{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;}
+.schedule-header-row{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;
+}
+.week-nav{display:flex;align-items:center;gap:12px;}
+.week-btn{
+  width:32px;height:32px;border-radius:var(--r-sm);
+  border:1.5px solid var(--border);background:transparent;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;
+}
+.week-btn:hover{border-color:var(--teal);background:var(--teal-light);}
+.week-btn svg{width:15px;height:15px;fill:none;stroke:var(--mid);stroke-width:2;}
+.week-label{font-family:var(--ff-head);font-size:15px;font-weight:800;color:var(--dark);}
+.view-toggle{display:flex;background:var(--border);border-radius:var(--r-full);padding:3px;}
+.vt-btn{
+  padding:5px 14px;border-radius:var(--r-full);font-size:12px;font-weight:700;
+  color:var(--mid);cursor:pointer;transition:.15s;border:none;background:transparent;
+}
+.vt-btn.active{background:var(--teal);color:#fff;}
+
+/* Calendar grid */
+.cal-grid{display:grid;grid-template-columns:60px repeat(7,1fr);gap:0;border:1px solid var(--border);border-radius:var(--r);}
+.cal-header{
+  display:contents;
+}
+.cal-day-label{
+  padding:10px 8px;text-align:center;font-size:11px;font-weight:800;
+  color:var(--mid);text-transform:uppercase;letter-spacing:.07em;
+  border-bottom:2px solid var(--border);
+}
+.cal-time-label{
+  padding:10px 8px;font-size:10px;color:var(--light);font-weight:700;
+  border-right:1px solid var(--border);border-bottom:1px solid var(--border);
+  display:flex;align-items:flex-start;justify-content:flex-end;
+}
+.cal-time-label:last-of-type{border-bottom:none;}
+
+/* Schedule cells */
+.schedule-cell{
+  border-right:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:4px;min-height:52px;position:relative;cursor:pointer;transition:.1s;
+}
+.schedule-cell:hover{background:var(--teal-xlight);}
+.schedule-cell:last-child{border-right:none;}
+.schedule-cell.today{background:rgba(8,81,79,.04);}
+.schedule-cell.available{background:rgba(26,158,117,.06);}
+.schedule-cell.available:hover{background:rgba(26,158,117,.12);}
+.schedule-cell.booked{background:rgba(245,166,35,.08);}
+.session-block{
+  border-radius:var(--r-sm);padding:5px 7px;font-size:10px;font-weight:700;
+  cursor:pointer;transition:.15s;margin-bottom:3px;overflow:hidden;
+}
+.sb-booked{background:rgba(245,166,35,.25);color:var(--amber-dark);border-left:3px solid var(--amber);}
+.sb-available{background:rgba(26,158,117,.2);color:#0A5A3A;border-left:3px solid var(--green);}
+.sb-live{background:rgba(37,211,102,.2);color:#0A5A3A;border-left:3px solid #25D366;animation:live-glow .8s infinite alternate;}
+@keyframes live-glow{from{box-shadow:none;}to{box-shadow:0 0 8px rgba(37,211,102,.4);}}
+.sb-blocked{background:var(--border);color:var(--light);border-left:3px solid var(--light);}
+.session-block-name{font-size:10px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.session-block-time{font-size:9px;opacity:.8;margin-top:1px;}
+
+/* Availability panel */
+.avail-panel{display:flex;flex-direction:column;gap:16px;}
+.avail-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;}
+.slot-grid{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.slot-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;border-radius:var(--r);border:1.5px solid var(--border);
+  transition:.15s;
+}
+.slot-item.on{border-color:var(--green);background:var(--green-light);}
+.slot-item.off{opacity:.5;}
+.slot-day{font-size:13px;font-weight:700;color:var(--dark);}
+.slot-times{font-size:11px;color:var(--mid);}
+.slot-toggle{
+  width:34px;height:18px;background:var(--green);border-radius:var(--r-full);
+  position:relative;cursor:pointer;transition:background .2s;
+}
+.slot-toggle.off{background:var(--border);}
+.slot-toggle::after{
+  content:'';width:14px;height:14px;background:#fff;border-radius:50%;
+  position:absolute;top:2px;right:2px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+.slot-toggle.off::after{transform:translateX(-16px);}
+.booking-prefs{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
+.pref-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.pref-row:last-child{border-bottom:none;}
+.pref-label{font-size:13px;font-weight:700;color:var(--dark);}
+.pref-sub{font-size:11px;color:var(--mid);}
+.pref-toggle{
+  width:36px;height:20px;background:var(--teal);border-radius:var(--r-full);
+  position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;
+}
+.pref-toggle.off{background:var(--border);}
+.pref-toggle::after{
+  content:'';width:15px;height:15px;background:#fff;border-radius:50%;
+  position:absolute;top:2.5px;left:18px;transition:transform .2s;
+}
+.pref-toggle.off::after{transform:translateX(-14px);}
+
+/* Student-facing preview label */
+.student-view-banner{
+  background:linear-gradient(135deg,var(--teal-light),var(--teal-xlight));
+  border:1.5px dashed var(--teal);border-radius:var(--r);
+  padding:12px 16px;margin-top:12px;
+  display:flex;align-items:center;gap:10px;
+}
+.svb-icon{font-size:20px;}
+.svb-text{font-size:12px;color:var(--teal);font-weight:700;}
+.svb-sub{font-size:11px;color:var(--mid);}
+
+/* ═══════════════════════════════════════════════
+   VIEW 3 — MY STUDENTS
+═══════════════════════════════════════════════ */
+.students-layout{display:grid;grid-template-columns:1fr 310px;gap:20px;}
+.students-list{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;}
+.students-toolbar{
+  display:flex;align-items:center;gap:12px;padding:16px 20px;
+  border-bottom:1px solid var(--border);flex-wrap:wrap;
+}
+.search-bar{
+  display:flex;align-items:center;gap:8px;
+  background:var(--teal-xlight);border:1.5px solid var(--border);
+  border-radius:var(--r-full);padding:8px 16px;flex:1;min-width:200px;
+}
+.search-bar svg{width:15px;height:15px;stroke:var(--mid);fill:none;stroke-width:2;flex-shrink:0;}
+.search-bar input{border:none;background:transparent;font-size:13px;color:var(--dark);outline:none;flex:1;}
+.filter-tabs{display:flex;gap:4px;}
+.ft-tab{
+  padding:6px 14px;border-radius:var(--r-full);font-size:12px;font-weight:700;
+  color:var(--mid);cursor:pointer;border:1.5px solid var(--border);
+  background:transparent;transition:.15s;
+}
+.ft-tab.active{background:var(--teal);color:#fff;border-color:var(--teal);}
+
+/* Student row */
+.student-row{
+  display:flex;align-items:center;gap:14px;padding:14px 20px;
+  border-bottom:1px solid var(--border);transition:.15s;cursor:pointer;
+}
+.student-row:last-child{border-bottom:none;}
+.student-row:hover{background:var(--teal-xlight);}
+.st-avatar{
+  width:42px;height:42px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-head);font-size:14px;font-weight:800;
+}
+.st-info{flex:1;}
+.st-name{font-size:14px;font-weight:800;color:var(--dark);}
+.st-meta{font-size:11px;color:var(--mid);display:flex;align-items:center;gap:8px;margin-top:2px;}
+.st-progress-col{width:120px;}
+.st-pct{font-family:var(--ff-head);font-size:15px;font-weight:800;min-width:42px;text-align:right;}
+.st-sessions-col{text-align:center;min-width:80px;}
+.st-sessions-num{font-family:var(--ff-head);font-size:16px;font-weight:800;color:var(--dark);}
+.st-sessions-label{font-size:10px;color:var(--mid);}
+.st-action{flex-shrink:0;}
+.at-risk-flag{
+  display:flex;align-items:center;gap:4px;
+  background:#FFE8E8;color:var(--red);
+  font-size:10px;font-weight:800;padding:3px 8px;border-radius:var(--r-full);
+}
+.at-risk-flag svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* Student detail panel */
+.student-detail{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;height:fit-content;position:sticky;top:88px;}
+.sd-header{
+  background:linear-gradient(135deg,var(--teal-light),var(--teal-xlight));
+  border-radius:var(--r);padding:18px;margin-bottom:16px;text-align:center;
+}
+.sd-avatar{
+  width:58px;height:58px;border-radius:50%;margin:0 auto 10px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-head);font-size:18px;font-weight:800;
+  border:3px solid var(--teal);
+}
+.sd-name{font-family:var(--ff-head);font-size:16px;font-weight:800;color:var(--dark);}
+.sd-sub{font-size:12px;color:var(--mid);margin-top:2px;}
+.sd-unit-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin:14px 0;}
+.sd-unit-row{display:flex;align-items:center;gap:10px;}
+.sd-unit-name{font-size:12px;font-weight:600;color:var(--dark);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sd-unit-track{flex:1;height:6px;background:var(--border);border-radius:var(--r-full);overflow:hidden;}
+.sd-unit-fill{height:100%;border-radius:var(--r-full);}
+.sd-unit-pct{font-size:11px;font-weight:800;min-width:32px;text-align:right;}
+.note-area{width:100%;border:1.5px solid var(--border);border-radius:var(--r);padding:10px 12px;font-size:13px;color:var(--dark);background:var(--card-bg);resize:none;font-family:var(--ff-body);outline:none;transition:.15s;}
+.note-area:focus{border-color:var(--teal);}
+
+/* ═══════════════════════════════════════════════
+   VIEW 4 — CONTENT STUDIO
+═══════════════════════════════════════════════ */
+.studio-layout{display:grid;grid-template-columns:1fr 280px;gap:20px;}
+.studio-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:20px;}
+.studio-tab{
+  padding:10px 20px;font-size:13px;font-weight:700;color:var(--mid);
+  cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;transition:.15s;
+}
+.studio-tab.active{color:var(--teal);border-bottom-color:var(--teal);}
+
+/* MCQ Builder */
+.mcq-builder{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:24px;}
+.option-row{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 14px;border-radius:var(--r);border:1.5px solid var(--border);
+  margin-bottom:8px;cursor:pointer;transition:.15s;
+}
+.option-row.correct-opt{border-color:var(--green);background:var(--green-light);}
+.opt-key{
+  width:28px;height:28px;border:1.5px solid var(--border);border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;font-family:var(--ff-head);color:var(--mid);flex-shrink:0;
+}
+.option-row.correct-opt .opt-key{background:var(--green);border-color:var(--green);color:#fff;}
+.opt-input{border:none;background:transparent;flex:1;font-size:14px;color:var(--dark);outline:none;font-family:var(--ff-body);resize:none;}
+.correct-selector{font-size:11px;font-weight:700;color:var(--mid);cursor:pointer;flex-shrink:0;margin-top:4px;}
+.option-row.correct-opt .correct-selector{color:var(--green);}
+.mcq-actions-row{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+
+/* Content stats sidebar */
+.studio-stats{display:flex;flex-direction:column;gap:14px;}
+.studio-stat-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;}
+.contribution-list{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
+.contrib-row{display:flex;align-items:center;gap:10px;}
+.contrib-icon{width:30px;height:30px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.contrib-icon svg{width:14px;height:14px;fill:none;stroke-width:2;stroke-linecap:round;}
+.contrib-info{flex:1;}
+.contrib-title{font-size:12px;font-weight:700;color:var(--dark);}
+.contrib-count{font-family:var(--ff-head);font-size:18px;font-weight:800;color:var(--teal);}
+.pending-review{background:var(--amber-light);border:1px solid rgba(245,166,35,.25);border-radius:var(--r-sm);padding:10px 12px;margin-top:8px;}
+.pr-label{font-size:11px;font-weight:800;color:var(--amber-dark);margin-bottom:4px;}
+.pr-count{font-family:var(--ff-head);font-size:22px;font-weight:800;color:var(--amber-dark);}
+.pr-sub{font-size:11px;color:var(--amber-dark);opacity:.7;}
+
+/* ═══════════════════════════════════════════════
+   VIEW 5 — EARNINGS
+═══════════════════════════════════════════════ */
+.earnings-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;}
+.earnings-hero{
+  background:linear-gradient(135deg,#061412 0%,var(--teal) 100%);
+  border-radius:var(--r-xl);padding:32px;color:#fff;margin-bottom:20px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;align-items:center;
+}
+.eh-stat{text-align:center;}
+.eh-label{font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.eh-value{font-family:var(--ff-head);font-size:36px;font-weight:800;color:#fff;}
+.eh-value.highlight{color:var(--amber);}
+.eh-sub{font-size:12px;color:rgba(255,255,255,.55);margin-top:4px;}
+.eh-divider{width:1px;height:60px;background:rgba(255,255,255,.1);margin:0 auto;}
+
+/* Transaction list */
+.transaction-table{width:100%;border-collapse:collapse;}
+.transaction-table th{
+  font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--mid);padding:10px 14px;text-align:left;border-bottom:2px solid var(--border);
+}
+.transaction-table td{font-size:13px;color:var(--dark);padding:12px 14px;border-bottom:1px solid var(--border);}
+.transaction-table tr:last-child td{border-bottom:none;}
+.transaction-table tr:hover td{background:var(--teal-xlight);}
+.tx-student{display:flex;align-items:center;gap:10px;}
+.tx-ava{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--ff-head);font-size:10px;font-weight:800;flex-shrink:0;}
+.tx-amount{font-family:var(--ff-head);font-size:15px;font-weight:800;color:var(--teal);}
+.tx-status-paid{display:inline-flex;align-items:center;gap:4px;background:var(--green-light);color:#0A5A3A;font-size:10px;font-weight:800;padding:3px 8px;border-radius:var(--r-full);}
+.tx-status-pending{background:var(--amber-light);color:var(--amber-dark);font-size:10px;font-weight:800;padding:3px 8px;border-radius:var(--r-full);display:inline-flex;}
+
+/* Payout card */
+.payout-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);padding:22px;}
+.mpesa-display{
+  background:linear-gradient(135deg,#00A150,#007A3D);
+  border-radius:var(--r);padding:16px;color:#fff;text-align:center;margin:14px 0;
+}
+.mpesa-logo{font-family:var(--ff-head);font-size:18px;font-weight:800;letter-spacing:.04em;}
+.mpesa-number{font-size:20px;font-weight:800;letter-spacing:.1em;margin-top:6px;color:rgba(255,255,255,.9);}
+.mpesa-label{font-size:10px;color:rgba(255,255,255,.55);margin-top:2px;}
+.payout-breakdown{display:flex;flex-direction:column;gap:8px;margin:12px 0;}
+.pb-row{display:flex;justify-content:space-between;font-size:13px;}
+.pb-label{color:var(--mid);}
+.pb-val{font-weight:700;color:var(--dark);}
+.pb-total{display:flex;justify-content:space-between;font-size:14px;padding-top:10px;border-top:2px solid var(--border);}
+.pb-total-label{font-weight:800;color:var(--dark);}
+.pb-total-val{font-family:var(--ff-head);font-size:18px;font-weight:800;color:var(--teal);}
+
+/* ═══════════════════════════════════════════════
+   VIEW 6 — REVIEWS & REPUTATION
+═══════════════════════════════════════════════ */
+.reviews-layout{display:grid;grid-template-columns:1fr 280px;gap:20px;}
+.rating-hero{
+  background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:28px;margin-bottom:20px;
+  display:flex;align-items:center;gap:40px;flex-wrap:wrap;
+}
+.rh-score{text-align:center;min-width:120px;}
+.rh-big{font-family:var(--ff-head);font-size:64px;font-weight:800;color:var(--dark);line-height:1;}
+.rh-stars{display:flex;gap:4px;justify-content:center;margin:8px 0;}
+.rh-stars span{font-size:22px;color:var(--amber);}
+.rh-count{font-size:13px;color:var(--mid);}
+.rh-bars{flex:1;}
+.rh-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.rh-star-label{font-size:12px;font-weight:700;color:var(--mid);width:48px;white-space:nowrap;}
+.rh-bar-track{flex:1;height:10px;background:var(--border);border-radius:var(--r-full);overflow:hidden;}
+.rh-bar-fill{height:100%;background:var(--amber);border-radius:var(--r-full);}
+.rh-count-small{font-size:12px;color:var(--mid);min-width:24px;text-align:right;}
+.rh-tags{display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
+.rh-kw{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:var(--teal-xlight);border-radius:var(--r-sm);padding:7px 12px;min-width:160px;
+}
+.rh-kw-word{font-size:13px;font-weight:700;color:var(--teal);}
+.rh-kw-count{font-family:var(--ff-head);font-size:14px;font-weight:800;color:var(--teal);}
+
+/* Review card */
+.review-card{
+  background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);
+  padding:22px;margin-bottom:12px;transition:.2s;
+}
+.review-card:hover{box-shadow:var(--shadow);}
+.rv-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.rv-avatar{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-head);font-size:13px;font-weight:800;
+}
+.rv-name{font-size:14px;font-weight:800;color:var(--dark);}
+.rv-meta{font-size:11px;color:var(--mid);}
+.rv-stars{display:flex;gap:2px;margin-left:auto;}
+.rv-stars span{font-size:14px;color:var(--amber);}
+.rv-stars .empty{color:var(--border);}
+.rv-text{font-size:14px;color:var(--dark);line-height:1.7;font-style:italic;}
+.rv-cadre{margin-top:10px;}
+
+/* Review stat sidebar */
+.review-side{display:flex;flex-direction:column;gap:16px;}
+.tip-card{background:var(--amber-light);border:1.5px solid rgba(245,166,35,.25);border-radius:var(--r-lg);padding:18px;}
+.tip-icon{font-size:24px;margin-bottom:8px;}
+.tip-title{font-family:var(--ff-head);font-size:14px;font-weight:800;color:var(--dark);margin-bottom:6px;}
+.tip-list{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.tip-list li{font-size:13px;color:var(--dark);display:flex;gap:8px;align-items:flex-start;}
+.tip-list li::before{content:'→';color:var(--amber-dark);font-weight:800;flex-shrink:0;}
+
+/* ═══════════════════════════════════════════════
+   VIEW 7 — PROFILE
+═══════════════════════════════════════════════ */
+.profile-layout{display:grid;grid-template-columns:1fr 300px;gap:20px;}
+.profile-hero{
+  background:linear-gradient(135deg,var(--dark) 0%,var(--teal-mid) 100%);
+  border-radius:var(--r-xl);padding:32px;color:#fff;margin-bottom:20px;
+  display:flex;align-items:center;gap:24px;flex-wrap:wrap;
+  position:relative;overflow:hidden;
+}
+.profile-hero::after{
+  content:'';position:absolute;right:-60px;top:-60px;
+  width:250px;height:250px;border-radius:50%;
+  background:radial-gradient(circle,rgba(245,166,35,.1),transparent 70%);
+}
+.ph-avatar{
+  width:80px;height:80px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--teal-mid),var(--teal));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-head);font-size:26px;font-weight:800;color:var(--amber);
+  border:4px solid rgba(245,166,35,.35);
+}
+.ph-info h2{font-size:22px;font-weight:800;margin-bottom:4px;}
+.ph-info p{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:12px;}
+.ph-tags{display:flex;gap:8px;flex-wrap:wrap;}
+.ph-tag{
+  background:rgba(255,255,255,.1);color:#fff;
+  border:1px solid rgba(255,255,255,.2);
+  font-size:11px;font-weight:700;padding:4px 12px;border-radius:var(--r-full);
+}
+.ph-tag.gold{background:rgba(245,166,35,.2);border-color:rgba(245,166,35,.3);color:var(--amber);}
+.ph-stats{
+  margin-left:auto;display:flex;gap:24px;flex-shrink:0;position:relative;z-index:1;
+}
+.ph-stat{text-align:center;}
+.ph-stat-num{font-family:var(--ff-head);font-size:28px;font-weight:800;color:var(--amber);}
+.ph-stat-label{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px;}
+
+/* Specialisation selector */
+.speciality-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;}
+.spec-item{
+  border:2px solid var(--border);border-radius:var(--r);padding:14px 12px;
+  text-align:center;cursor:pointer;transition:.15s;
+}
+.spec-item:hover{border-color:var(--teal);}
+.spec-item.selected{border-color:var(--teal);background:var(--teal-light);}
+.spec-icon{font-size:22px;margin-bottom:6px;}
+.spec-name{font-size:12px;font-weight:800;color:var(--dark);}
+.spec-cadre{font-size:10px;color:var(--mid);margin-top:2px;}
+
+/* Public profile preview */
+.profile-preview{
+  background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-lg);
+  overflow:hidden;position:sticky;top:88px;
+}
+.pp-header{
+  background:linear-gradient(135deg,var(--teal),var(--teal-mid));
+  padding:20px;color:#fff;text-align:center;
+}
+.pp-avatar{
+  width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ff-head);font-size:18px;font-weight:800;color:var(--amber);
+  margin:0 auto 10px;border:2px solid rgba(245,166,35,.4);
+}
+.pp-name{font-family:var(--ff-head);font-size:15px;font-weight:800;margin-bottom:2px;}
+.pp-title-sm{font-size:11px;color:rgba(255,255,255,.65);}
+.pp-verify{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(245,166,35,.2);border:1px solid rgba(245,166,35,.3);
+  color:var(--amber);font-size:9px;font-weight:800;padding:3px 8px;
+  border-radius:var(--r-full);margin-top:8px;
+}
+.pp-body{padding:18px;}
+.pp-stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
+.pp-stat-box{background:var(--teal-xlight);border-radius:var(--r-sm);padding:10px;text-align:center;}
+.pp-stat-val{font-family:var(--ff-head);font-size:16px;font-weight:800;color:var(--teal);}
+.pp-stat-lbl{font-size:9px;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;}
+.pp-spec-list{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.pp-avail-slot{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;
+}
+.pp-avail-slot:last-child{border-bottom:none;}
+.pp-avail-day{font-weight:700;color:var(--dark);}
+.pp-avail-time{color:var(--mid);}
+.pp-book-btn{
+  width:100%;padding:12px;background:var(--amber);color:var(--dark);
+  border:none;border-radius:var(--r-full);font-family:var(--ff-body);
+  font-size:14px;font-weight:800;cursor:pointer;margin-top:12px;
+  transition:.18s;
+}
+.pp-book-btn:hover{background:var(--amber-dark);color:#fff;}
+
+/* ═══════════════════════════════════════════════
+   MOBILE / RESPONSIVE
+═══════════════════════════════════════════════ */
+.mobile-toggle{
+  display:none;position:fixed;bottom:20px;right:20px;z-index:300;
+  width:52px;height:52px;background:var(--teal);border-radius:50%;border:none;
+  align-items:center;justify-content:center;box-shadow:var(--shadow-lg);cursor:pointer;
+}
+.mobile-toggle svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2.2;}
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:199;
+}
+@media(max-width:1200px){
+  .home-main-grid{grid-template-columns:1fr 1fr;}
+  .home-main-grid .earnings-snapshot{grid-column:1/-1;}
+  .studio-layout{grid-template-columns:1fr;}
+}
+@media(max-width:1024px){
+  .cal-grid{grid-template-columns:60px repeat(5,1fr);}
+  .quick-stats{grid-template-columns:repeat(2,1fr);}
+  .grid-4{grid-template-columns:1fr 1fr;}
+  .earnings-hero{grid-template-columns:1fr 1fr;}
+  .eh-divider:last-of-type{display:none;}
+}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main-area{margin-left:0;}
+  .mobile-toggle{display:flex;}
+  .sidebar-overlay.show{display:block;}
+  .schedule-layout,.students-layout,.reviews-layout,.profile-layout,.earnings-layout{grid-template-columns:1fr;}
+  .student-detail,.payout-card,.review-side,.profile-preview,.avail-panel{display:none;}
+  .grid-aside,.grid-aside-lg{grid-template-columns:1fr;}
+  .welcome-hero{grid-template-columns:1fr;}
+  .wh-right{display:none;}
+  .home-main-grid{grid-template-columns:1fr;}
+  .speciality-grid{grid-template-columns:repeat(2,1fr);}
+  .ph-stats{display:none;}
+}
+@media(max-width:600px){
+  .content{padding:16px;}
+  .topbar{padding:0 16px;}
+  .earnings-hero{grid-template-columns:1fr;}
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+  .rh-tags{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     SIDEBAR
+════════════════════════════════════════ -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-top">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div>
+        <span class="logo-text">Nurse<span>Pass</span></span>
+        <span class="logo-badge">Expert Portal</span>
+      </div>
+    </div>
+
+    <!-- Tutor profile -->
+    <div class="sidebar-profile">
+      <div class="online-dot"><span></span></div>
+      <div class="tutor-avatar">DN</div>
+      <div class="tutor-info">
+        <div class="tutor-name">Dr. Dennis Njoroge</div>
+        <div class="tutor-title">RN, BScN, MSc Clinical Nursing</div>
+        <div class="verify-chip">⭐ Gold Verified</div>
+      </div>
+      <div class="earnings-strip">
+        <div class="es-item">
+          <div class="es-val">4.9</div>
+          <div class="es-label">Rating</div>
+        </div>
+        <div class="es-item">
+          <div class="es-val">127</div>
+          <div class="es-label">Students</div>
+        </div>
+        <div class="es-item">
+          <div class="es-val">94%</div>
+          <div class="es-label">Pass Rate</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Availability toggle -->
+    <div class="availability-toggle">
+      <div>
+        <div class="avail-label">Accepting Bookings</div>
+        <div class="avail-status" id="availStatusText">● Online & Available</div>
+      </div>
+      <div class="avail-toggle-track" id="availToggle" onclick="toggleAvail()"></div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-label">Overview</div>
+    <a class="active" onclick="showView('home',this)">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Dashboard
+    </a>
+    <a onclick="showView('schedule',this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Schedule & Availability
+      <span class="nav-new">3 new</span>
+    </a>
+
+    <div class="nav-label">Students</div>
+    <a onclick="showView('students',this)">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      My Students
+      <span class="nav-badge">2</span>
+    </a>
+
+    <div class="nav-label">Content & Growth</div>
+    <a onclick="showView('studio',this)">
+      <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Content Studio
+    </a>
+    <a onclick="showView('earnings',this)">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Earnings & Payouts
+    </a>
+    <a onclick="showView('reviews',this)">
+      <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Reviews & Ratings
+    </a>
+
+    <div class="nav-label">Account</div>
+    <a onclick="showView('profile',this)">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      My Profile
+    </a>
+  </nav>
+
+  <div class="sidebar-rating">
+    <div class="sr-bottom">
+      <div class="sr-count">4.9</div>
+      <div class="sr-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+    </div>
+    <div class="sr-text">Based on 84 student reviews</div>
+    <div style="margin-top:8px;">
+      <div class="prog-track"><div class="prog-fill pf-amber" style="width:94%;"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ════════════════════════════════════════
+     MAIN AREA
+════════════════════════════════════════ -->
+<div class="main-area">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="page-breadcrumb">
+        <strong id="breadcrumbTitle">Dashboard</strong>
+      </div>
+      <div class="tutor-portal-badge">Expert Tutor</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-stat">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span id="topbarNextSession">Next: 2:00 PM</span>
+      </div>
+      <button class="icon-btn" title="Messages">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <span class="notif-dot"></span>
+      </button>
+      <button class="icon-btn" title="Notifications">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        <span class="notif-dot"></span>
+      </button>
+      <button class="dark-btn" onclick="toggleDark()">
+        <span id="darkLabel">🌙 Dark</span>
+        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      </button>
+      <div class="topbar-avatar">DN</div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ══════════════════════════════
+         VIEW: HOME DASHBOARD
+    ══════════════════════════════ -->
+    <div class="view active" id="view-home">
+
+      <!-- Welcome Hero -->
+      <div class="welcome-hero">
+        <div class="wh-left">
+          <div class="wh-eyebrow"><span></span>Monday, 18 May 2026</div>
+          <h2>Good morning, Dr. Njoroge 👋</h2>
+          <p>You have <strong style="color:var(--amber);">3 sessions today</strong> and <strong style="color:var(--amber);">2 new booking requests</strong> awaiting your response. Your students are averaging 76% this week.</p>
+          <div class="wh-actions">
+            <button class="btn btn-amber" onclick="showView('schedule',null)">📅 View Today's Sessions</button>
+            <button class="btn" style="background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);" onclick="showView('students',null)">👥 My Students</button>
+          </div>
+        </div>
+        <div class="wh-right">
+          <div class="today-sessions-mini">
+            <div class="tsm-label">Today's Schedule</div>
+            <div class="tsm-session">
+              <div class="tsm-time">10:00</div>
+              <div class="tsm-dot dot-done"></div>
+              <div class="tsm-info"><div class="tsm-name">Mercy W.</div><div class="tsm-meta">KRCHN · Pharmacology · Done ✓</div></div>
+            </div>
+            <div class="tsm-session">
+              <div class="tsm-time">14:00</div>
+              <div class="tsm-dot dot-live"></div>
+              <div class="tsm-info"><div class="tsm-name">James K.</div><div class="tsm-meta">BScN · Med-Surg · Live now</div></div>
+            </div>
+            <div class="tsm-session">
+              <div class="tsm-time">16:30</div>
+              <div class="tsm-dot dot-upcoming"></div>
+              <div class="tsm-info"><div class="tsm-name">Faith A.</div><div class="tsm-meta">KRCHN · Community Health</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="quick-stats">
+        <div class="stat-card">
+          <div class="stat-icon si-amber"><svg viewBox="0 0 24 24" stroke="var(--amber-dark)"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+          <div class="stat-label">May Earnings</div>
+          <div class="stat-value">KSh 28,400</div>
+          <div class="stat-delta up">↑ KSh 4,200 vs April</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon si-teal"><svg viewBox="0 0 24 24" stroke="var(--teal)"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+          <div class="stat-label">Active Students</div>
+          <div class="stat-value">127</div>
+          <div class="stat-delta up">↑ 12 this month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon si-green"><svg viewBox="0 0 24 24" stroke="var(--green)"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          <div class="stat-label">Avg Student Score</div>
+          <div class="stat-value">76%</div>
+          <div class="stat-delta up">↑ 4% this cycle</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon si-amber"><svg viewBox="0 0 24 24" stroke="var(--amber-dark)"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div>
+          <div class="stat-label">Student Pass Rate</div>
+          <div class="stat-value">94%</div>
+          <div class="stat-delta up">Industry best ★</div>
+        </div>
+      </div>
+
+      <!-- Main 3-col content -->
+      <div class="home-main-grid">
+
+        <!-- Upcoming sessions -->
+        <div class="session-queue card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <div class="card-title">Upcoming Sessions</div>
+            <button class="btn btn-ghost btn-sm" onclick="showView('schedule',null)">View all →</button>
+          </div>
+          <div class="sq-item">
+            <div class="sq-avatar" style="background:var(--teal-light);color:var(--teal);">JK</div>
+            <div class="sq-info">
+              <div class="sq-name">James K.</div>
+              <div class="sq-detail">BScN · Medical–Surgical Nursing · Zoom</div>
+            </div>
+            <div class="sq-status">
+              <div class="live-badge">Live now</div>
+              <div class="sq-time">14:00</div>
+            </div>
+          </div>
+          <div class="sq-item">
+            <div class="sq-avatar" style="background:var(--amber-light);color:var(--amber-dark);">FA</div>
+            <div class="sq-info">
+              <div class="sq-name">Faith A.</div>
+              <div class="sq-detail">KRCHN · Community Health · WhatsApp</div>
+            </div>
+            <div class="sq-status">
+              <div class="sq-time">16:30</div>
+            </div>
+          </div>
+          <div class="sq-item">
+            <div class="sq-avatar" style="background:var(--green-light);color:#0A5A3A;">PM</div>
+            <div class="sq-info">
+              <div class="sq-name">Patricia M.</div>
+              <div class="sq-detail">Higher Dip · Critical Care · Google Meet</div>
+            </div>
+            <div class="sq-status">
+              <div class="sq-time">Tomorrow 9AM</div>
+            </div>
+          </div>
+          <div class="sq-item" style="background:rgba(245,166,35,.05);border-radius:var(--r);padding:12px 10px;margin:4px -4px 0;border-bottom:none;">
+            <div style="font-size:13px;font-weight:800;color:var(--amber-dark);">📥 2 Pending Booking Requests</div>
+            <div style="font-size:11px;color:var(--mid);margin-top:2px;">Agnes N. (KRCHN) and Brian O. (BScN) have requested sessions</div>
+            <div style="display:flex;gap:8px;margin-top:10px;">
+              <button class="btn btn-teal btn-sm" onclick="showView('schedule',null)">Review Requests</button>
+              <button class="btn btn-ghost btn-sm">Decline All</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student performance -->
+        <div class="student-perf-card card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <div class="card-title">Student Progress</div>
+            <span class="tag tag-teal">This week</span>
+          </div>
+          <div class="sp-row">
+            <div class="sp-ava" style="background:var(--teal-light);color:var(--teal);">MW</div>
+            <div class="sp-name">Mercy W.</div>
+            <div class="sp-bar-wrap"><div class="prog-track"><div class="prog-fill pf-green" style="width:82%;"></div></div></div>
+            <div class="sp-pct" style="color:var(--green);">82%</div>
+            <div class="sp-trend up">↑7%</div>
+          </div>
+          <div class="sp-row">
+            <div class="sp-ava" style="background:var(--amber-light);color:var(--amber-dark);">JK</div>
+            <div class="sp-name">James K.</div>
+            <div class="sp-bar-wrap"><div class="prog-track"><div class="prog-fill pf-teal" style="width:74%;"></div></div></div>
+            <div class="sp-pct" style="color:var(--teal);">74%</div>
+            <div class="sp-trend up">↑5%</div>
+          </div>
+          <div class="sp-row">
+            <div class="sp-ava" style="background:#F0EAFF;color:#6D28D9;">FA</div>
+            <div class="sp-name">Faith A.</div>
+            <div class="sp-bar-wrap"><div class="prog-track"><div class="prog-fill pf-amber" style="width:68%;"></div></div></div>
+            <div class="sp-pct" style="color:var(--amber-dark);">68%</div>
+            <div class="sp-trend up">↑3%</div>
+          </div>
+          <div class="sp-row">
+            <div class="sp-ava" style="background:#FFE8E8;color:var(--red);">BO</div>
+            <div class="sp-name">Brian O.</div>
+            <div class="sp-bar-wrap"><div class="prog-track"><div class="prog-fill pf-red" style="width:51%;"></div></div></div>
+            <div class="sp-pct" style="color:var(--red);">51%</div>
+            <div class="at-risk-flag"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>At risk</div>
+          </div>
+          <div class="sp-row">
+            <div class="sp-ava" style="background:var(--green-light);color:#0A5A3A;">PM</div>
+            <div class="sp-name">Patricia M.</div>
+            <div class="sp-bar-wrap"><div class="prog-track"><div class="prog-fill pf-green" style="width:88%;"></div></div></div>
+            <div class="sp-pct" style="color:var(--green);">88%</div>
+            <div class="sp-trend up">↑2%</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:12px;" onclick="showView('students',null)">View All 127 Students →</button>
+        </div>
+
+        <!-- Earnings snapshot -->
+        <div class="earnings-snapshot card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div class="card-title">This Month</div>
+            <span class="tag tag-green">M-Pesa</span>
+          </div>
+          <div class="es-period" style="margin-bottom:0;">May 2026 earnings</div>
+          <div class="es-total">KSh 28,400</div>
+          <div class="es-chart">
+            <div class="es-bar-col"><div class="es-bar" style="height:55%;"></div><span class="es-day">W1</span></div>
+            <div class="es-bar-col"><div class="es-bar" style="height:70%;"></div><span class="es-day">W2</span></div>
+            <div class="es-bar-col"><div class="es-bar best" style="height:90%;"></div><span class="es-day">W3</span></div>
+            <div class="es-bar-col"><div class="es-bar" style="height:40%;"></div><span class="es-day">W4</span></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;font-size:13px;">
+              <span style="color:var(--mid);">Sessions completed</span><strong>34</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;">
+              <span style="color:var(--mid);">Platform commission (15%)</span><strong style="color:var(--red);">-KSh 4,260</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px;padding-top:6px;border-top:1px solid var(--border);">
+              <strong>Net payout</strong><strong style="color:var(--teal);">KSh 24,140</strong>
+            </div>
+          </div>
+          <button class="es-payout-btn" onclick="showView('earnings',null)">
+            <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            Request M-Pesa Payout
+          </button>
+        </div>
+      </div>
+
+      <!-- Content contribution banner -->
+      <div style="margin-top:20px;background:linear-gradient(135deg,var(--teal-xlight),var(--cream));border:1.5px solid var(--border);border-radius:var(--r-lg);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="font-size:36px;">✍️</div>
+          <div>
+            <div style="font-family:var(--ff-head);font-size:15px;font-weight:800;color:var(--dark);">Content Studio — Your Questions Are in the Student Bank</div>
+            <div style="font-size:13px;color:var(--mid);margin-top:2px;">You've contributed <strong style="color:var(--teal);">142 MCQs</strong> and <strong style="color:var(--teal);">8 study notes</strong> that students are using right now. <strong style="color:var(--amber-dark);">3 pending review.</strong></div>
+          </div>
+        </div>
+        <button class="btn btn-amber" onclick="showView('studio',null)">Add Content →</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         VIEW: SCHEDULE & AVAILABILITY
+    ══════════════════════════════ -->
+    <div class="view" id="view-schedule">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Schedule & Availability</h1>
+          <p>Set your weekly slots — they appear live on the student booking page</p>
+        </div>
+        <button class="btn btn-amber">+ Add Slot</button>
+      </div>
+      <div class="schedule-layout">
+        <!-- Calendar -->
+        <div class="schedule-main">
+          <div class="schedule-header-row">
+            <div class="week-nav">
+              <button class="week-btn"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>
+              <span class="week-label">18 – 24 May 2026</span>
+              <button class="week-btn"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mid);">
+                <div style="width:10px;height:10px;border-radius:50%;background:#25D366;"></div>Live
+                <div style="width:10px;height:10px;border-radius:50%;background:var(--amber);margin-left:8px;"></div>Booked
+                <div style="width:10px;height:10px;border-radius:50%;background:var(--green);margin-left:8px;"></div>Available
+              </div>
+              <div class="view-toggle">
+                <button class="vt-btn active">Week</button>
+                <button class="vt-btn">Month</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cal-grid">
+            <!-- Header -->
+            <div class="cal-day-label" style="border-bottom:2px solid var(--border);"></div>
+            <div class="cal-day-label" style="border-bottom:2px solid var(--border);">Mon 18</div>
+            <div class="cal-day-label" style="border-bottom:2px solid var(--border);color:var(--teal);font-weight:800;">Tue 19</div>
+            <div class="cal-day-label" style="border-bottom:2px solid var(--border);">Wed 20</div>
+            <div class="cal-day-label" style="border-bottom:2px solid var(--border);">Thu 21</div>
+            <div class="cal-day-label" style="border-bottom:2px solid var(--border);">Fri 22</div>
+            <div class="cal-day-label" style="border-bottom:2px solid var(--border);color:var(--mid);">Sat 23</div>
+            <div class="cal-day-label" style="border-bottom:2px solid var(--border);color:var(--mid);">Sun 24</div>
+            <!-- 8AM -->
+            <div class="cal-time-label">8:00</div>
+            <div class="schedule-cell available"><div class="session-block sb-available"><div class="session-block-name">Open slot</div><div class="session-block-time">8:00–9:00</div></div></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell available"><div class="session-block sb-available"><div class="session-block-name">Open slot</div><div class="session-block-time">8:00–9:00</div></div></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell available"><div class="session-block sb-available"><div class="session-block-name">Open slot</div><div class="session-block-time">8:00–9:00</div></div></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell"></div>
+            <!-- 10AM -->
+            <div class="cal-time-label">10:00</div>
+            <div class="schedule-cell booked"><div class="session-block sb-booked"><div class="session-block-name">Mercy W.</div><div class="session-block-time">10:00 KRCHN</div></div></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell booked"><div class="session-block sb-booked"><div class="session-block-name">Agnes N.</div><div class="session-block-time">10:00 KRCHN</div></div></div>
+            <div class="schedule-cell booked"><div class="session-block sb-booked"><div class="session-block-name">Brian O.</div><div class="session-block-time">10:30 BScN</div></div></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell"></div>
+            <!-- 12PM -->
+            <div class="cal-time-label">12:00</div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell"></div>
+            <!-- 2PM -->
+            <div class="cal-time-label">14:00</div>
+            <div class="schedule-cell"><div class="session-block sb-live"><div class="session-block-name">James K. 🔴</div><div class="session-block-time">14:00 BScN LIVE</div></div></div>
+            <div class="schedule-cell available"><div class="session-block sb-available"><div class="session-block-name">Open slot</div><div class="session-block-time">14:00–15:00</div></div></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell booked"><div class="session-block sb-booked"><div class="session-block-name">Kevin M.</div><div class="session-block-time">14:00 KRCHN</div></div></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell"></div>
+            <!-- 4PM -->
+            <div class="cal-time-label">16:00</div>
+            <div class="schedule-cell booked"><div class="session-block sb-booked"><div class="session-block-name">Faith A.</div><div class="session-block-time">16:30 KRCHN</div></div></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell available"><div class="session-block sb-available"><div class="session-block-name">Open slot</div><div class="session-block-time">16:00–17:00</div></div></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell booked"><div class="session-block sb-booked"><div class="session-block-name">Patricia M.</div><div class="session-block-time">16:00 Higher Dip</div></div></div>
+            <div class="schedule-cell"></div>
+            <div class="schedule-cell"></div>
+          </div>
+        </div>
+
+        <!-- Availability Settings -->
+        <div class="avail-panel">
+          <div class="avail-card">
+            <div class="card-title">Weekly Availability</div>
+            <div class="card-sub">Visible to students for booking</div>
+            <div class="slot-grid">
+              <div class="slot-item on">
+                <div><div class="slot-day">Monday</div><div class="slot-times">8:00–10:00 · 14:00–18:00</div></div>
+                <div class="slot-toggle" onclick="this.classList.toggle('off')"></div>
+              </div>
+              <div class="slot-item on">
+                <div><div class="slot-day">Tuesday</div><div class="slot-times">14:00–17:00</div></div>
+                <div class="slot-toggle" onclick="this.classList.toggle('off')"></div>
+              </div>
+              <div class="slot-item on">
+                <div><div class="slot-day">Wednesday</div><div class="slot-times">8:00–10:00 · 16:00–18:00</div></div>
+                <div class="slot-toggle" onclick="this.classList.toggle('off')"></div>
+              </div>
+              <div class="slot-item on">
+                <div><div class="slot-day">Thursday</div><div class="slot-times">10:30–12:00 · 14:00–15:00</div></div>
+                <div class="slot-toggle" onclick="this.classList.toggle('off')"></div>
+              </div>
+              <div class="slot-item on">
+                <div><div class="slot-day">Friday</div><div class="slot-times">16:00–18:00</div></div>
+                <div class="slot-toggle" onclick="this.classList.toggle('off')"></div>
+              </div>
+              <div class="slot-item off">
+                <div><div class="slot-day">Saturday</div><div class="slot-times">Unavailable</div></div>
+                <div class="slot-toggle off" onclick="this.classList.toggle('off')"></div>
+              </div>
+              <div class="slot-item off">
+                <div><div class="slot-day">Sunday</div><div class="slot-times">Unavailable</div></div>
+                <div class="slot-toggle off" onclick="this.classList.toggle('off')"></div>
+              </div>
+            </div>
+            <div class="student-view-banner">
+              <div class="svb-icon">👁️</div>
+              <div>
+                <div class="svb-text">Synced to student booking page</div>
+                <div class="svb-sub">Students see these exact slots when booking you</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="avail-card">
+            <div class="card-title">Session Preferences</div>
+            <div class="booking-prefs">
+              <div class="pref-row">
+                <div><div class="pref-label">Allow instant booking</div><div class="pref-sub">Students can book without approval</div></div>
+                <div class="pref-toggle" onclick="this.classList.toggle('off')"></div>
+              </div>
+              <div class="pref-row">
+                <div><div class="pref-label">Group sessions (up to 5)</div><div class="pref-sub">Allow multiple students per slot</div></div>
+                <div class="pref-toggle off" onclick="this.classList.toggle('off')"></div>
+              </div>
+              <div class="pref-row">
+                <div><div class="pref-label">WhatsApp sessions</div><div class="pref-sub">Offer sessions via WhatsApp call</div></div>
+                <div class="pref-toggle" onclick="this.classList.toggle('off')"></div>
+              </div>
+              <div class="pref-row">
+                <div><div class="pref-label">Buffer time (30 min)</div><div class="pref-sub">Auto-block 30 min between sessions</div></div>
+                <div class="pref-toggle" onclick="this.classList.toggle('off')"></div>
+              </div>
+            </div>
+            <div class="field-group" style="margin-top:12px;margin-bottom:0;">
+              <label class="field-label">My session rate</label>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <span style="font-size:14px;font-weight:700;color:var(--mid);">KSh</span>
+                <input class="field-input" value="1,200" type="text" style="flex:1;"/>
+                <span style="font-size:13px;color:var(--mid);">/ hour</span>
+              </div>
+              <div style="font-size:11px;color:var(--mid);margin-top:6px;">Platform fee: 15% · Your net: <strong style="color:var(--teal);">KSh 1,020/hr</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         VIEW: MY STUDENTS
+    ══════════════════════════════ -->
+    <div class="view" id="view-students">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>My Students</h1>
+          <p>Track progress, identify at-risk students, and add session notes</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <span class="tag tag-red" style="font-size:13px;padding:7px 14px;">⚠ 2 At Risk</span>
+          <button class="btn btn-amber">+ Invite Student</button>
+        </div>
+      </div>
+      <div class="students-layout">
+        <div class="students-list">
+          <div class="students-toolbar">
+            <div class="search-bar">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" placeholder="Search by name or cadre…"/>
+            </div>
+            <div class="filter-tabs">
+              <button class="ft-tab active">All (127)</button>
+              <button class="ft-tab">KRCHN (78)</button>
+              <button class="ft-tab">BScN (41)</button>
+              <button class="ft-tab">Higher Dip (8)</button>
+              <button class="ft-tab" style="color:var(--red);border-color:rgba(232,69,69,.3);">⚠ At Risk (2)</button>
+            </div>
+          </div>
+
+          <!-- Table header -->
+          <div style="display:flex;align-items:center;gap:14px;padding:10px 20px;border-bottom:2px solid var(--border);font-size:11px;font-weight:800;color:var(--mid);text-transform:uppercase;letter-spacing:.07em;">
+            <div style="flex:1;">Student</div>
+            <div style="width:120px;">Progress</div>
+            <div style="min-width:42px;text-align:right;">Score</div>
+            <div style="min-width:80px;text-align:center;">Sessions</div>
+            <div style="flex-shrink:0;width:100px;">Status</div>
+          </div>
+
+          <!-- Student rows -->
+          <div class="student-row" onclick="selectStudent(this,'Mercy Wanjiku','MW','KRCHN','#E8F5F4','#08514F',82,74,12,'Pharmacology')">
+            <div class="st-avatar" style="background:var(--teal-light);color:var(--teal);">MW</div>
+            <div class="st-info">
+              <div class="st-name">Mercy Wanjiku</div>
+              <div class="st-meta"><span class="tag tag-teal" style="font-size:10px;">KRCHN</span>Nairobi · August cycle</div>
+            </div>
+            <div class="st-progress-col"><div class="prog-track"><div class="prog-fill pf-green" style="width:82%;"></div></div></div>
+            <div class="st-pct" style="color:var(--green);">82%</div>
+            <div class="st-sessions-col"><div class="st-sessions-num">12</div><div class="st-sessions-label">sessions</div></div>
+            <div class="st-action"><span class="tag tag-green">On track</span></div>
+          </div>
+          <div class="student-row" onclick="selectStudent(this,'James Kariuki','JK','BScN','#FFF3DC','#C47F0A',74,68,8,'Med-Surg')">
+            <div class="st-avatar" style="background:var(--amber-light);color:var(--amber-dark);">JK</div>
+            <div class="st-info">
+              <div class="st-name">James Kariuki</div>
+              <div class="st-meta"><span class="tag tag-amber" style="font-size:10px;">BScN</span>Mombasa · August cycle</div>
+            </div>
+            <div class="st-progress-col"><div class="prog-track"><div class="prog-fill pf-teal" style="width:74%;"></div></div></div>
+            <div class="st-pct" style="color:var(--teal);">74%</div>
+            <div class="st-sessions-col"><div class="st-sessions-num">8</div><div class="st-sessions-label">sessions</div></div>
+            <div class="st-action"><span class="tag tag-teal">Good</span></div>
+          </div>
+          <div class="student-row" onclick="selectStudent(this,'Brian Otieno','BO','BScN','#FFE8E8','#C0392B',51,58,3,'Pharmacology')">
+            <div class="st-avatar" style="background:#FFE8E8;color:var(--red);">BO</div>
+            <div class="st-info">
+              <div class="st-name">Brian Otieno</div>
+              <div class="st-meta"><span class="tag tag-amber" style="font-size:10px;">BScN</span>Eldoret · August cycle</div>
+            </div>
+            <div class="st-progress-col"><div class="prog-track"><div class="prog-fill pf-red" style="width:51%;"></div></div></div>
+            <div class="st-pct" style="color:var(--red);">51%</div>
+            <div class="st-sessions-col"><div class="st-sessions-num">3</div><div class="st-sessions-label">sessions</div></div>
+            <div class="st-action">
+              <div class="at-risk-flag"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>At risk</div>
+            </div>
+          </div>
+          <div class="student-row">
+            <div class="st-avatar" style="background:var(--green-light);color:#0A5A3A;">PM</div>
+            <div class="st-info">
+              <div class="st-name">Patricia Muthoni</div>
+              <div class="st-meta"><span class="tag tag-purple" style="font-size:10px;">Higher Dip</span>Nairobi · Critical Care</div>
+            </div>
+            <div class="st-progress-col"><div class="prog-track"><div class="prog-fill pf-green" style="width:88%;"></div></div></div>
+            <div class="st-pct" style="color:var(--green);">88%</div>
+            <div class="st-sessions-col"><div class="st-sessions-num">16</div><div class="st-sessions-label">sessions</div></div>
+            <div class="st-action"><span class="tag tag-green">Excellent</span></div>
+          </div>
+          <div class="student-row">
+            <div class="st-avatar" style="background:#F0EAFF;color:#6D28D9;">FA</div>
+            <div class="st-info">
+              <div class="st-name">Faith Akinyi</div>
+              <div class="st-meta"><span class="tag tag-teal" style="font-size:10px;">KRCHN</span>Kisumu · August cycle</div>
+            </div>
+            <div class="st-progress-col"><div class="prog-track"><div class="prog-fill pf-amber" style="width:68%;"></div></div></div>
+            <div class="st-pct" style="color:var(--amber-dark);">68%</div>
+            <div class="st-sessions-col"><div class="st-sessions-num">6</div><div class="st-sessions-label">sessions</div></div>
+            <div class="st-action"><span class="tag tag-amber">Needs focus</span></div>
+          </div>
+          <div style="padding:12px 20px;text-align:center;font-size:13px;color:var(--mid);border-top:1px solid var(--border);">
+            Showing 5 of 127 students · <a style="color:var(--teal);font-weight:700;cursor:pointer;">Load more</a>
+          </div>
+        </div>
+
+        <!-- Student detail -->
+        <div class="student-detail">
+          <div class="sd-header">
+            <div class="sd-avatar" style="background:var(--teal-light);color:var(--teal);" id="sdAvatar">MW</div>
+            <div class="sd-name" id="sdName">Mercy Wanjiku</div>
+            <div class="sd-sub" id="sdSub">KRCHN · Nairobi · 12 sessions</div>
+            <div style="margin-top:8px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;">
+              <span class="tag tag-teal" id="sdCadre">KRCHN</span>
+              <span class="tag tag-green">On Track</span>
+            </div>
+          </div>
+          <div class="card-title" style="margin-bottom:6px;">Unit Performance</div>
+          <ul class="sd-unit-list" id="sdUnitList">
+            <li class="sd-unit-row"><span class="sd-unit-name">Med-Surgical</span><div class="sd-unit-track"><div class="sd-unit-fill" style="width:85%;background:var(--green);"></div></div><span class="sd-unit-pct" style="color:var(--green);">85%</span></li>
+            <li class="sd-unit-row"><span class="sd-unit-name">Community Health</span><div class="sd-unit-track"><div class="sd-unit-fill" style="width:78%;background:var(--teal);"></div></div><span class="sd-unit-pct" style="color:var(--teal);">78%</span></li>
+            <li class="sd-unit-row"><span class="sd-unit-name">Pharmacology</span><div class="sd-unit-track"><div class="sd-unit-fill" style="width:62%;background:var(--amber);"></div></div><span class="sd-unit-pct" style="color:var(--amber-dark);">62%</span></li>
+            <li class="sd-unit-row"><span class="sd-unit-name">Psychiatry</span><div class="sd-unit-track"><div class="sd-unit-fill" style="width:70%;background:var(--teal);"></div></div><span class="sd-unit-pct" style="color:var(--teal);">70%</span></li>
+          </ul>
+          <div style="background:var(--amber-light);border-radius:var(--r-sm);padding:10px 12px;font-size:12px;color:var(--amber-dark);margin-bottom:14px;">
+            <strong>⚡ AI Insight:</strong> <span id="sdInsight">Focus next session on Pharmacology — student's weakest unit at 62%.</span>
+          </div>
+          <div class="divider"></div>
+          <div class="card-title" style="margin-bottom:8px;">Session Notes</div>
+          <textarea class="note-area" rows="3" placeholder="Add private notes about this student's progress…">Mercy is progressing well. Pharmacology still weak — planned targeted drill for next session (Wed 20 May).</textarea>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button class="btn btn-teal btn-sm">Save Note</button>
+            <button class="btn btn-amber btn-sm" onclick="showView('schedule',null)">Book Session</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         VIEW: CONTENT STUDIO
+    ══════════════════════════════ -->
+    <div class="view" id="view-studio">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Content Studio</h1>
+          <p>Contribute MCQs and notes — reviewed by our team then added to the student question bank</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:12px;color:var(--mid);">Pending review:</span>
+          <span class="tag tag-amber" style="font-size:13px;">3 items</span>
+        </div>
+      </div>
+      <div class="studio-layout">
+        <div>
+          <div class="studio-tabs">
+            <button class="studio-tab active" onclick="switchStudioTab(this,'mcq')">Add MCQ Question</button>
+            <button class="studio-tab" onclick="switchStudioTab(this,'note')">Add Study Note</button>
+            <button class="studio-tab" onclick="switchStudioTab(this,'history')">My Contributions</button>
+          </div>
+
+          <!-- MCQ Builder -->
+          <div id="studio-mcq" class="mcq-builder">
+            <div class="grid-2">
+              <div class="field-group">
+                <label class="field-label">Cadre</label>
+                <select class="field-input">
+                  <option>KRCHN — Diploma</option>
+                  <option>BScN — Degree</option>
+                  <option>Higher Diploma — Critical Care</option>
+                  <option>Higher Diploma — Oncology</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Unit / Topic</label>
+                <select class="field-input">
+                  <option>Pharmacology</option>
+                  <option>Medical–Surgical Nursing</option>
+                  <option>Community Health Nursing</option>
+                  <option>Midwifery & Reproductive Health</option>
+                  <option>Paediatric Nursing</option>
+                  <option>Psychiatric Nursing</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Question Stem</label>
+              <textarea class="field-input" rows="3" placeholder="A 42-year-old patient on heparin therapy presents with…">A nurse administering IV gentamicin should monitor the patient closely for which of the following adverse effects?</textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Answer Options — click ✓ to mark correct answer</label>
+              <div class="option-row" onclick="setCorrect(this)">
+                <div class="opt-key">A</div>
+                <input class="opt-input" value="Hepatotoxicity and elevated liver enzymes" placeholder="Option A…"/>
+                <span class="correct-selector">✓ Mark correct</span>
+              </div>
+              <div class="option-row correct-opt" onclick="setCorrect(this)">
+                <div class="opt-key">B</div>
+                <input class="opt-input" value="Nephrotoxicity and ototoxicity" placeholder="Option B…"/>
+                <span class="correct-selector">✓ Correct</span>
+              </div>
+              <div class="option-row" onclick="setCorrect(this)">
+                <div class="opt-key">C</div>
+                <input class="opt-input" value="Hyperglycaemia and weight gain" placeholder="Option C…"/>
+                <span class="correct-selector">✓ Mark correct</span>
+              </div>
+              <div class="option-row" onclick="setCorrect(this)">
+                <div class="opt-key">D</div>
+                <input class="opt-input" value="Thrombocytopenia and bruising" placeholder="Option D…"/>
+                <span class="correct-selector">✓ Mark correct</span>
+              </div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Detailed Rationale (explain why B is correct AND why A, C, D are wrong)</label>
+              <textarea class="field-input" rows="5" placeholder="Explain the correct answer and refute each wrong option with evidence…">Aminoglycosides like gentamicin are well known for nephrotoxicity (acute tubular necrosis) and ototoxicity (cochlear and vestibular damage). The nurse must monitor renal function tests (creatinine, BUN) and assess for hearing changes or tinnitus. Option A: Hepatotoxicity is not a primary concern with aminoglycosides. Option C: Hyperglycaemia is associated with corticosteroids, not aminoglycosides. Option D: Thrombocytopenia is not a classic adverse effect of gentamicin.</textarea>
+            </div>
+            <div class="field-group">
+              <label class="field-label">Difficulty Level</label>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-ghost btn-sm" style="border-color:var(--green);color:var(--green);">Easy</button>
+                <button class="btn btn-sm" style="background:var(--amber-light);color:var(--amber-dark);border:1.5px solid rgba(245,166,35,.3);">Medium ✓</button>
+                <button class="btn btn-ghost btn-sm" style="border-color:var(--red);color:var(--red);">Hard</button>
+              </div>
+            </div>
+            <div class="mcq-actions-row">
+              <button class="btn btn-amber">Submit for Review →</button>
+              <button class="btn btn-ghost">Save as Draft</button>
+              <span style="font-size:12px;color:var(--mid);margin-left:auto;">Reviewed within 48 hrs · +50 XP on approval</span>
+            </div>
+          </div>
+
+          <!-- Study Note (hidden by default) -->
+          <div id="studio-note" style="display:none;" class="mcq-builder">
+            <div class="grid-2">
+              <div class="field-group"><label class="field-label">Cadre</label><select class="field-input"><option>KRCHN</option><option>BScN</option><option>Higher Diploma</option></select></div>
+              <div class="field-group"><label class="field-label">Topic</label><input class="field-input" placeholder="e.g. Anticoagulant Drugs" type="text"/></div>
+            </div>
+            <div class="field-group"><label class="field-label">Note Title</label><input class="field-input" placeholder="e.g. Heparin Therapy — Nursing Considerations" type="text"/></div>
+            <div class="field-group"><label class="field-label">Content (Markdown supported)</label><textarea class="field-input" rows="12" placeholder="## Heparin Therapy&#10;&#10;### Mechanism&#10;Heparin activates **antithrombin III**, inhibiting factors IIa and Xa…"></textarea></div>
+            <div class="mcq-actions-row">
+              <button class="btn btn-amber">Submit Note for Review →</button>
+              <button class="btn btn-ghost">Save Draft</button>
+            </div>
+          </div>
+
+          <!-- Contribution history (hidden) -->
+          <div id="studio-history" style="display:none;" class="card">
+            <div class="card-title" style="margin-bottom:16px;">My Contributions</div>
+            <table class="transaction-table">
+              <thead><tr><th>Question / Note</th><th>Unit</th><th>Cadre</th><th>Status</th><th>Views</th><th>XP</th></tr></thead>
+              <tbody>
+                <tr><td>Heparin aPTT monitoring question</td><td>Pharmacology</td><td><span class="tag tag-teal">KRCHN</span></td><td><span class="tag tag-green">Approved</span></td><td>1,240</td><td style="color:var(--amber);font-weight:800;">+50</td></tr>
+                <tr><td>Gentamicin nephrotoxicity (above)</td><td>Pharmacology</td><td><span class="tag tag-teal">KRCHN</span></td><td><span class="tag tag-amber">Pending</span></td><td>—</td><td>—</td></tr>
+                <tr><td>Signs of Meningitis — note</td><td>Med-Surgical</td><td><span class="tag tag-amber">BScN</span></td><td><span class="tag tag-green">Approved</span></td><td>3,890</td><td style="color:var(--amber);font-weight:800;">+80</td></tr>
+                <tr><td>STEMI vs NSTEMI clinical scenario</td><td>Cardiac Nursing</td><td><span class="tag tag-amber">BScN</span></td><td><span class="tag tag-green">Approved</span></td><td>2,105</td><td style="color:var(--amber);font-weight:800;">+50</td></tr>
+                <tr><td>Ventilator settings — Critical Care note</td><td>Critical Care</td><td><span class="tag tag-purple">Higher Dip</span></td><td><span class="tag tag-red">Needs revision</span></td><td>—</td><td>—</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Studio sidebar stats -->
+        <div class="studio-stats">
+          <div class="studio-stat-card">
+            <div class="card-title" style="margin-bottom:12px;">Your Contributions</div>
+            <div class="contribution-list">
+              <div class="contrib-row">
+                <div class="contrib-icon si-amber"><svg viewBox="0 0 24 24" stroke="var(--amber-dark)"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4z"/></svg></div>
+                <div class="contrib-info"><div class="contrib-title">MCQ Questions</div><div class="contrib-count">142</div></div>
+              </div>
+              <div class="contrib-row">
+                <div class="contrib-icon si-teal"><svg viewBox="0 0 24 24" stroke="var(--teal)"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg></div>
+                <div class="contrib-info"><div class="contrib-title">Study Notes</div><div class="contrib-count">8</div></div>
+              </div>
+              <div class="contrib-row">
+                <div class="contrib-icon si-green"><svg viewBox="0 0 24 24" stroke="var(--green)"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+                <div class="contrib-info"><div class="contrib-title">Students reached</div><div class="contrib-count">4,280</div></div>
+              </div>
+            </div>
+            <div class="pending-review">
+              <div class="pr-label">⏳ Pending Review</div>
+              <div class="pr-count">3</div>
+              <div class="pr-sub">items awaiting moderation</div>
+            </div>
+          </div>
+          <div class="studio-stat-card">
+            <div class="card-title" style="margin-bottom:10px;">Content XP Earned</div>
+            <div style="font-family:var(--ff-head);font-size:36px;font-weight:800;color:var(--amber);">1,840</div>
+            <div style="font-size:12px;color:var(--mid);">From approved contributions</div>
+            <div style="margin-top:12px;font-size:12px;color:var(--mid);">Each approved MCQ: <strong style="color:var(--dark);">+50 XP</strong><br/>Each approved note: <strong style="color:var(--dark);">+80 XP</strong></div>
+          </div>
+          <div style="background:var(--teal-xlight);border:1.5px dashed var(--teal);border-radius:var(--r-lg);padding:16px;font-size:13px;color:var(--teal);">
+            <strong>💡 Gap Alert:</strong> The platform has zero Higher Diploma — Oncology content. Questions in this area are fast-tracked for review and earn <strong>+100 XP each.</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         VIEW: EARNINGS
+    ══════════════════════════════ -->
+    <div class="view" id="view-earnings">
+      <div class="page-header">
+        <div class="page-header-left"><h1>Earnings & Payouts</h1><p>All payments via M-Pesa · Payouts processed every Monday</p></div>
+        <button class="btn btn-amber">Request Payout →</button>
+      </div>
+
+      <!-- Earnings Hero -->
+      <div class="earnings-hero">
+        <div class="eh-stat">
+          <div class="eh-label">This Month (May)</div>
+          <div class="eh-value highlight">KSh 28,400</div>
+          <div class="eh-sub">34 sessions · 127 students</div>
+        </div>
+        <div class="eh-divider"></div>
+        <div class="eh-stat">
+          <div class="eh-label">Total Earned (2026)</div>
+          <div class="eh-value">KSh 142,500</div>
+          <div class="eh-sub">Across 5 months</div>
+        </div>
+        <div class="eh-divider"></div>
+        <div class="eh-stat">
+          <div class="eh-label">Next Payout (Mon 20 May)</div>
+          <div class="eh-value highlight">KSh 24,140</div>
+          <div class="eh-sub">After 15% platform fee</div>
+        </div>
+      </div>
+
+      <div class="earnings-layout">
+        <!-- Transactions -->
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+            <div class="card-title">Transaction History</div>
+            <div style="display:flex;gap:8px;">
+              <select class="field-input" style="width:auto;padding:6px 12px;font-size:12px;">
+                <option>All sessions</option><option>KRCHN</option><option>BScN</option><option>Higher Dip</option>
+              </select>
+              <button class="btn btn-ghost btn-sm">Export CSV</button>
+            </div>
+          </div>
+          <table class="transaction-table">
+            <thead><tr><th>Student</th><th>Session Type</th><th>Date</th><th>Duration</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="tx-student"><div class="tx-ava" style="background:var(--teal-light);color:var(--teal);">JK</div>James K.</div></td>
+                <td>BScN · Med-Surgical</td><td>Today 14:00</td><td>1 hr</td>
+                <td><span class="tx-amount">KSh 1,020</span></td>
+                <td><span class="tx-status-paid">✓ Paid</span></td>
+              </tr>
+              <tr>
+                <td><div class="tx-student"><div class="tx-ava" style="background:var(--teal-light);color:var(--teal);">MW</div>Mercy W.</div></td>
+                <td>KRCHN · Pharmacology</td><td>Today 10:00</td><td>1 hr</td>
+                <td><span class="tx-amount">KSh 1,020</span></td>
+                <td><span class="tx-status-paid">✓ Paid</span></td>
+              </tr>
+              <tr>
+                <td><div class="tx-student"><div class="tx-ava" style="background:var(--amber-light);color:var(--amber-dark);">FA</div>Faith A.</div></td>
+                <td>KRCHN · Community Health</td><td>Today 16:30</td><td>1 hr</td>
+                <td><span class="tx-amount">KSh 1,020</span></td>
+                <td><span class="tx-status-pending">⏳ Upcoming</span></td>
+              </tr>
+              <tr>
+                <td><div class="tx-student"><div class="tx-ava" style="background:var(--green-light);color:#0A5A3A;">PM</div>Patricia M.</div></td>
+                <td>Higher Dip · Critical Care</td><td>Sat 17 May</td><td>1.5 hr</td>
+                <td><span class="tx-amount">KSh 1,530</span></td>
+                <td><span class="tx-status-paid">✓ Paid</span></td>
+              </tr>
+              <tr>
+                <td><div class="tx-student"><div class="tx-ava" style="background:#F0EAFF;color:#6D28D9;">KM</div>Kevin M.</div></td>
+                <td>KRCHN · Midwifery</td><td>Fri 16 May</td><td>1 hr</td>
+                <td><span class="tx-amount">KSh 1,020</span></td>
+                <td><span class="tx-status-paid">✓ Paid</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="padding:12px 0;text-align:center;border-top:1px solid var(--border);">
+            <a style="font-size:13px;color:var(--teal);font-weight:700;cursor:pointer;">Load 34 more transactions →</a>
+          </div>
+        </div>
+
+        <!-- Payout card -->
+        <div class="payout-card">
+          <div class="card-title">M-Pesa Payout</div>
+          <div class="card-sub">Automatic every Monday</div>
+          <div class="mpesa-display">
+            <div class="mpesa-logo">M-PESA</div>
+            <div class="mpesa-number">0712 *** 678</div>
+            <div class="mpesa-label">Dr. Dennis Njoroge</div>
+          </div>
+          <div class="payout-breakdown">
+            <div class="pb-row"><span class="pb-label">Gross earnings (May)</span><span class="pb-val">KSh 28,400</span></div>
+            <div class="pb-row"><span class="pb-label">Platform fee (15%)</span><span class="pb-val" style="color:var(--red);">-KSh 4,260</span></div>
+            <div class="pb-row"><span class="pb-label">Already paid out</span><span class="pb-val" style="color:var(--green);">-KSh 0</span></div>
+          </div>
+          <div class="pb-total"><span class="pb-total-label">Available to pay</span><span class="pb-total-val">KSh 24,140</span></div>
+          <button class="btn btn-amber" style="width:100%;margin-top:14px;justify-content:center;font-size:14px;">Request KSh 24,140 Payout</button>
+          <div style="font-size:11px;color:var(--mid);text-align:center;margin-top:8px;">Processed within 24 hours to your M-Pesa</div>
+          <div class="divider"></div>
+          <div class="card-title" style="margin-bottom:10px;font-size:13px;">Rate Optimisation</div>
+          <div style="font-size:12px;color:var(--mid);line-height:1.7;">
+            Your current rate: <strong style="color:var(--dark);">KSh 1,200/hr</strong><br/>
+            Average for Gold tutors: <strong style="color:var(--teal);">KSh 1,500/hr</strong><br/>
+            <span style="color:var(--amber-dark);">💡 Increasing your rate to KSh 1,500 could add <strong>KSh 8,000+/month</strong> at your current volume.</span>
+          </div>
+          <button class="btn btn-outline btn-sm" style="width:100%;margin-top:10px;justify-content:center;">Update My Rate</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         VIEW: REVIEWS
+    ══════════════════════════════ -->
+    <div class="view" id="view-reviews">
+      <div class="page-header">
+        <div class="page-header-left"><h1>Reviews & Reputation</h1><p>What your students say — visible on your public tutor profile</p></div>
+      </div>
+
+      <!-- Rating hero -->
+      <div class="rating-hero">
+        <div class="rh-score">
+          <div class="rh-big">4.9</div>
+          <div class="rh-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <div class="rh-count">84 reviews</div>
+        </div>
+        <div class="rh-bars">
+          <div class="rh-bar-row"><span class="rh-star-label">5 stars</span><div class="rh-bar-track"><div class="rh-bar-fill" style="width:88%;"></div></div><span class="rh-count-small">74</span></div>
+          <div class="rh-bar-row"><span class="rh-star-label">4 stars</span><div class="rh-bar-track"><div class="rh-bar-fill" style="width:10%;"></div></div><span class="rh-count-small">8</span></div>
+          <div class="rh-bar-row"><span class="rh-star-label">3 stars</span><div class="rh-bar-track"><div class="rh-bar-fill" style="width:2%;"></div></div><span class="rh-count-small">2</span></div>
+          <div class="rh-bar-row"><span class="rh-star-label">2 stars</span><div class="rh-bar-track"><div class="rh-bar-fill" style="width:0%;"></div></div><span class="rh-count-small">0</span></div>
+          <div class="rh-bar-row"><span class="rh-star-label">1 star</span><div class="rh-bar-track"><div class="rh-bar-fill" style="width:0%;"></div></div><span class="rh-count-small">0</span></div>
+        </div>
+        <div class="rh-tags">
+          <div class="rh-kw"><span class="rh-kw-word">🧠 Clear explanations</span><span class="rh-kw-count">61×</span></div>
+          <div class="rh-kw"><span class="rh-kw-word">⚡ Exam-focused</span><span class="rh-kw-count">48×</span></div>
+          <div class="rh-kw"><span class="rh-kw-word">😊 Patient tutor</span><span class="rh-kw-count">39×</span></div>
+          <div class="rh-kw"><span class="rh-kw-word">📚 Great rationales</span><span class="rh-kw-count">34×</span></div>
+        </div>
+      </div>
+
+      <div class="reviews-layout">
+        <div>
+          <div class="review-card">
+            <div class="rv-header">
+              <div class="rv-avatar" style="background:var(--teal-light);color:var(--teal);">MW</div>
+              <div><div class="rv-name">Mercy Wanjiku</div><div class="rv-meta">KRCHN · Nairobi · 12 sessions</div></div>
+              <div class="rv-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+            </div>
+            <p class="rv-text">"Dr. Njoroge is exceptional. He doesn't just give you the answer — he teaches you how to think through the question. After 4 sessions on Pharmacology, I went from 52% to 78%. Passed my NCK first attempt. Highly recommend."</p>
+            <div class="rv-cadre"><span class="tag tag-teal">KRCHN Diploma</span> <span style="font-size:11px;color:var(--mid);">Verified Session Student</span></div>
+          </div>
+          <div class="review-card">
+            <div class="rv-header">
+              <div class="rv-avatar" style="background:var(--amber-light);color:var(--amber-dark);">JK</div>
+              <div><div class="rv-name">James Kariuki</div><div class="rv-meta">BScN · Mombasa · 8 sessions</div></div>
+              <div class="rv-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+            </div>
+            <p class="rv-text">"The best thing about Dr. Njoroge is that he studies your weak areas from your NurseFiti dashboard before the session — so every minute of tutoring is targeted. No time wasted. Worth every shilling."</p>
+            <div class="rv-cadre"><span class="tag tag-amber">BScN Degree</span> <span style="font-size:11px;color:var(--mid);">Verified Session Student</span></div>
+          </div>
+          <div class="review-card">
+            <div class="rv-header">
+              <div class="rv-avatar" style="background:var(--green-light);color:#0A5A3A;">PM</div>
+              <div><div class="rv-name">Patricia Muthoni</div><div class="rv-meta">Higher Dip · Critical Care · 16 sessions</div></div>
+              <div class="rv-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+            </div>
+            <p class="rv-text">"For Higher Diploma Critical Care, finding a tutor who actually understands ICU nursing at exam level is nearly impossible. Dr. Njoroge knows it deeply. The only tutor I'd recommend for specialty nursing exams."</p>
+            <div class="rv-cadre"><span class="tag tag-purple">Higher Diploma</span> <span style="font-size:11px;color:var(--mid);">Verified Session Student</span></div>
+          </div>
+        </div>
+
+        <div class="review-side">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:12px;">Tutor Ranking</div>
+            <div style="text-align:center;padding:16px 0;">
+              <div style="font-size:48px;font-weight:800;font-family:var(--ff-head);color:var(--teal);">#3</div>
+              <div style="font-size:13px;color:var(--mid);">out of 48 tutors on NurseFiti</div>
+              <div style="margin-top:12px;padding:10px;background:var(--amber-light);border-radius:var(--r-sm);">
+                <div style="font-size:12px;font-weight:800;color:var(--amber-dark);">🎯 To reach #1</div>
+                <div style="font-size:12px;color:var(--dark);margin-top:2px;">Get 6 more 5-star reviews this month</div>
+              </div>
+            </div>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">💡</div>
+            <div class="tip-title">How to get more reviews</div>
+            <ul class="tip-list">
+              <li>Send a polite WhatsApp message after each session asking for a review</li>
+              <li>Students who pass NCK are most likely to leave 5-star reviews — follow up post-exam</li>
+              <li>Respond to every review publicly — it shows professionalism</li>
+              <li>Offer a 10-min free debrief after mock exams to build loyalty</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════
+         VIEW: PROFILE
+    ══════════════════════════════ -->
+    <div class="view" id="view-profile">
+      <div class="page-header">
+        <div class="page-header-left"><h1>My Expert Profile</h1><p>This is exactly what students see when booking you</p></div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-ghost">Preview Student View</button>
+          <button class="btn btn-amber">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- Profile hero -->
+      <div class="profile-hero">
+        <div class="ph-avatar">DN</div>
+        <div class="ph-info">
+          <h2>Dr. Dennis Njoroge, RN</h2>
+          <p>BScN · MSc Clinical Nursing · 11 years bedside experience · NCK examiner 2019–2022</p>
+          <div class="ph-tags">
+            <span class="ph-tag gold">⭐ Gold Verified</span>
+            <span class="ph-tag">KRCHN Specialist</span>
+            <span class="ph-tag">BScN Specialist</span>
+            <span class="ph-tag">Critical Care (Higher Dip)</span>
+          </div>
+        </div>
+        <div class="ph-stats">
+          <div class="ph-stat"><div class="ph-stat-num">127</div><div class="ph-stat-label">Students</div></div>
+          <div class="ph-stat"><div class="ph-stat-num">4.9★</div><div class="ph-stat-label">Rating</div></div>
+          <div class="ph-stat"><div class="ph-stat-num">94%</div><div class="ph-stat-label">Pass Rate</div></div>
+        </div>
+      </div>
+
+      <div class="profile-layout">
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <!-- Basic info -->
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px;">Basic Information</div>
+            <div class="grid-2">
+              <div class="field-group"><label class="field-label">Full Name</label><input class="field-input" value="Dr. Dennis Njoroge" type="text"/></div>
+              <div class="field-group"><label class="field-label">Professional Title</label><input class="field-input" value="RN, BScN, MSc Clinical Nursing" type="text"/></div>
+              <div class="field-group"><label class="field-label">NCK Registration Number</label><input class="field-input" value="NCK/RN/04827" type="text"/></div>
+              <div class="field-group"><label class="field-label">Years of Experience</label><input class="field-input" value="11" type="number"/></div>
+              <div class="field-group" style="grid-column:1/-1;"><label class="field-label">Professional Bio (shown to students)</label><textarea class="field-input" rows="3">Registered Nurse with 11 years bedside experience at Kenyatta National Hospital and Aga Khan University Hospital. Former NCK Examiner (2019–2022). Passionate about helping nurses pass their licensure exams on the first attempt.</textarea></div>
+            </div>
+            <div class="field-group">
+              <label class="field-label">WhatsApp Number (for session delivery)</label>
+              <input class="field-input" value="+254 712 345 678" type="tel" style="max-width:280px;"/>
+            </div>
+          </div>
+
+          <!-- Specialisations -->
+          <div class="card">
+            <div class="card-title" style="margin-bottom:4px;">Cadres & Specialisations</div>
+            <div class="card-sub" style="margin-bottom:14px;">Select all cadres you are qualified to tutor — students filter by these</div>
+            <div class="speciality-grid">
+              <div class="spec-item selected"><div class="spec-icon">🏥</div><div class="spec-name">KRCHN</div><div class="spec-cadre">Diploma</div></div>
+              <div class="spec-item selected"><div class="spec-icon">🎓</div><div class="spec-name">BScN</div><div class="spec-cadre">Degree</div></div>
+              <div class="spec-item selected"><div class="spec-icon">❤️‍🩹</div><div class="spec-name">Critical Care</div><div class="spec-cadre">Higher Diploma</div></div>
+              <div class="spec-item"><div class="spec-icon">🎗️</div><div class="spec-name">Oncology</div><div class="spec-cadre">Higher Diploma</div></div>
+              <div class="spec-item"><div class="spec-icon">🫀</div><div class="spec-name">Renal</div><div class="spec-cadre">Higher Diploma</div></div>
+              <div class="spec-item"><div class="spec-icon">🧠</div><div class="spec-name">Psychiatric</div><div class="spec-cadre">Higher Diploma</div></div>
+            </div>
+          </div>
+
+          <!-- Verification -->
+          <div class="card">
+            <div class="card-title" style="margin-bottom:14px;">Verification Status</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--green-light);border-radius:var(--r);border:1px solid rgba(26,158,117,.2);">
+                <span style="font-size:20px;">✅</span>
+                <div><div style="font-size:13px;font-weight:800;color:#0A5A3A;">Identity Verified</div><div style="font-size:11px;color:var(--mid);">National ID / Passport confirmed</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--green-light);border-radius:var(--r);border:1px solid rgba(26,158,117,.2);">
+                <span style="font-size:20px;">✅</span>
+                <div><div style="font-size:13px;font-weight:800;color:#0A5A3A;">NCK Registration Verified</div><div style="font-size:11px;color:var(--mid);">NCK/RN/04827 — Active registration</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--amber-light);border-radius:var(--r);border:1px solid rgba(245,166,35,.2);">
+                <span style="font-size:20px;">⏳</span>
+                <div><div style="font-size:13px;font-weight:800;color:var(--amber-dark);">Academic Credentials — Under Review</div><div style="font-size:11px;color:var(--mid);">BScN degree certificate submitted · 2–3 days</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--green-light);border-radius:var(--r);border:1px solid rgba(26,158,117,.2);">
+                <span style="font-size:20px;">✅</span>
+                <div><div style="font-size:13px;font-weight:800;color:#0A5A3A;">M-Pesa Account Linked</div><div style="font-size:11px;color:var(--mid);">+254 712 *** 678 verified</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Public profile preview -->
+        <div class="profile-preview">
+          <div class="pp-header">
+            <div class="pp-avatar">DN</div>
+            <div class="pp-name">Dr. Dennis Njoroge</div>
+            <div class="pp-title-sm">RN, BScN, MSc Clinical Nursing</div>
+            <div class="pp-verify">⭐ Gold Verified Expert</div>
+          </div>
+          <div class="pp-body">
+            <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mid);margin-bottom:8px;">Student Preview</div>
+            <div class="pp-stats-row">
+              <div class="pp-stat-box"><div class="pp-stat-val">4.9★</div><div class="pp-stat-lbl">Rating</div></div>
+              <div class="pp-stat-box"><div class="pp-stat-val">127</div><div class="pp-stat-lbl">Students</div></div>
+              <div class="pp-stat-box"><div class="pp-stat-val">94%</div><div class="pp-stat-lbl">Pass Rate</div></div>
+            </div>
+            <div class="pp-spec-list">
+              <span class="tag tag-teal" style="font-size:10px;">KRCHN</span>
+              <span class="tag tag-amber" style="font-size:10px;">BScN</span>
+              <span class="tag tag-purple" style="font-size:10px;">Critical Care</span>
+            </div>
+            <div style="font-size:12px;font-weight:800;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Available Slots This Week</div>
+            <div class="pp-avail-slot"><span class="pp-avail-day">Monday</span><span class="pp-avail-time">8:00–10:00, 14:00–18:00</span></div>
+            <div class="pp-avail-slot"><span class="pp-avail-day">Tuesday</span><span class="pp-avail-time">14:00–17:00</span></div>
+            <div class="pp-avail-slot"><span class="pp-avail-day">Wednesday</span><span class="pp-avail-time">8:00–10:00, 16:00–18:00</span></div>
+            <div class="pp-avail-slot"><span class="pp-avail-day">Friday</span><span class="pp-avail-time">16:00–18:00</span></div>
+            <div style="margin-top:10px;padding:8px;background:var(--teal-xlight);border-radius:var(--r-sm);font-size:12px;color:var(--teal);font-weight:700;">KSh 1,200/hr · First 15 min free discovery call</div>
+            <button class="pp-book-btn">Book a Session →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end .content -->
+</div><!-- end .main-area -->
+
+<!-- Mobile toggle -->
+<button class="mobile-toggle" id="mobileToggle" onclick="toggleSidebar()">
+  <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+
+<script>
+/* ──────────────────
+   NAV / VIEWS
+────────────────── */
+const viewNames={
+  home:'Dashboard',schedule:'Schedule & Availability',students:'My Students',
+  studio:'Content Studio',earnings:'Earnings & Payouts',reviews:'Reviews & Ratings',profile:'My Profile'
+};
+function showView(id,el){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const v=document.getElementById('view-'+id);
+  if(v) v.classList.add('active');
+  document.querySelectorAll('.sidebar-nav a').forEach(a=>a.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('breadcrumbTitle').textContent=viewNames[id]||'Dashboard';
+  if(window.innerWidth<=900) closeSidebar();
+}
+
+/* ──────────────────
+   DARK MODE
+────────────────── */
+function toggleDark(){
+  document.body.classList.toggle('dark');
+  const l=document.getElementById('darkLabel');
+  l.textContent=document.body.classList.contains('dark')?'☀️ Light':'🌙 Dark';
+}
+
+/* ──────────────────
+   MOBILE SIDEBAR
+────────────────── */
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+
+/* ──────────────────
+   AVAILABILITY TOGGLE
+────────────────── */
+function toggleAvail(){
+  const t=document.getElementById('availToggle');
+  const s=document.getElementById('availStatusText');
+  t.classList.toggle('off');
+  if(t.classList.contains('off')){
+    s.style.color='rgba(255,255,255,.4)';
+    s.textContent='● Away — not accepting bookings';
+  } else {
+    s.style.color='#25D366';
+    s.textContent='● Online & Available';
+  }
+}
+
+/* ──────────────────
+   STUDENT DETAIL PANEL
+────────────────── */
+function selectStudent(row,name,initials,cadre,bg,color,score,pharm,sessions,weak){
+  document.querySelectorAll('.student-row').forEach(r=>r.style.background='');
+  row.style.background='var(--teal-xlight)';
+  document.getElementById('sdAvatar').textContent=initials;
+  document.getElementById('sdAvatar').style.background=bg;
+  document.getElementById('sdAvatar').style.color=color;
+  document.getElementById('sdName').textContent=name;
+  document.getElementById('sdSub').textContent=cadre+' · '+sessions+' sessions';
+  document.getElementById('sdCadre').textContent=cadre;
+  document.getElementById('sdInsight').textContent='Focus next session on '+weak+' — student\'s weakest unit at '+pharm+'%.';
+}
+
+/* ──────────────────
+   MCQ BUILDER
+────────────────── */
+function setCorrect(row){
+  document.querySelectorAll('.option-row').forEach(r=>r.classList.remove('correct-opt'));
+  row.classList.add('correct-opt');
+}
+
+/* ──────────────────
+   STUDIO TABS
+────────────────── */
+function switchStudioTab(el,tab){
+  document.querySelectorAll('.studio-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('studio-mcq').style.display=tab==='mcq'?'block':'none';
+  document.getElementById('studio-note').style.display=tab==='note'?'block':'none';
+  document.getElementById('studio-history').style.display=tab==='history'?'block':'none';
+}
+
+/* ──────────────────
+   CALENDAR SLOT CLICK
+────────────────── */
+document.querySelectorAll('.schedule-cell').forEach(cell=>{
+  cell.addEventListener('click',function(e){
+    if(e.target.classList.contains('session-block')||e.target.closest('.session-block')) return;
+    if(this.querySelector('.session-block')) return;
+    const existing=this.querySelector('.sb-available');
+    if(existing){this.removeChild(existing);this.classList.remove('available');return;}
+    this.classList.add('available');
+    const b=document.createElement('div');
+    b.className='session-block sb-available';
+    b.innerHTML='<div class="session-block-name">Open slot</div><div class="session-block-time">Click to remove</div>';
+    this.appendChild(b);
+  });
+});
+
+/* ──────────────────
+   VIEW TOGGLE BUTTONS
+────────────────── */
+document.querySelectorAll('.vt-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.vt-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+document.querySelectorAll('.ft-tab').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.ft-tab').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+document.querySelectorAll('.unit-filter-list .ufl-item').forEach(item=>{
+  item.addEventListener('click',function(){
+    document.querySelectorAll('.ufl-item').forEach(i=>i.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+/* ──────────────────
+   SPECIALITY SELECTOR
+────────────────── */
+document.querySelectorAll('.spec-item').forEach(item=>{
+  item.addEventListener('click',function(){this.classList.toggle('selected');});
+});
+document.querySelectorAll('.cadre-option').forEach(item=>{
+  item.addEventListener('click',function(){
+    document.querySelectorAll('.cadre-option').forEach(i=>i.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+/* ──────────────────
+   EARNINGS BARS TOOLTIP
+────────────────── */
+const earningsData=[8200,10400,14600,5200];
+const labels=['KSh 8,200','KSh 10,400','KSh 14,600','KSh 5,200'];
+document.querySelectorAll('.es-bar').forEach((bar,i)=>{
+  bar.addEventListener('mouseenter',()=>{
+    const tip=document.createElement('div');
+    tip.textContent=labels[i]||'';
+    tip.style.cssText='position:absolute;bottom:calc(100%+4px);left:50%;transform:translateX(-50%);background:#0F1C1C;color:#fff;font-size:10px;font-weight:800;padding:3px 7px;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:10;';
+    bar.style.position='relative';
+    bar.appendChild(tip);
+  });
+  bar.addEventListener('mouseleave',()=>{
+    const tip=bar.querySelector('div');
+    if(tip) bar.removeChild(tip);
+  });
+});
+</script>
+</body>
+</html>
