@@ -28,7 +28,7 @@ export default function AchievementsPage() {
     const fetchStats = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
+        const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
         if (profile) {
           setStats({
             xp_points: profile.xp_points || 0,

@@ -50,14 +50,9 @@ function LoginForm() {
           .from('profiles')
           .select('role')
           .eq('id', data.user.id)
-          .maybeSingle();
+          .single();
 
         if (profileError) throw profileError;
-        
-        if (!profile) {
-          toast.error('Profile not found. Please contact support.');
-          return;
-        }
 
         toast.success('Welcome back!');
 
