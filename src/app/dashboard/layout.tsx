@@ -23,14 +23,14 @@ export default async function DashboardLayout({
     .from('profiles')
     .select('*')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
 
   // Get student profile
   const { data: studentProfile } = await supabase
     .from('student_profiles')
     .select('*')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
 
   if (!profile || profile.role !== 'student') {
     redirect('/tutor/dashboard');

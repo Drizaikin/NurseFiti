@@ -17,7 +17,7 @@ export default async function AnalyticsPage() {
     .from('student_profiles')
     .select('*')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
 
   // Get all answers
   const { data: allAnswers } = await supabase
@@ -48,7 +48,7 @@ export default async function AnalyticsPage() {
         .from('questions')
         .select('unit')
         .eq('id', answer.question_id)
-        .single();
+        .maybeSingle();
 
       if (question) {
         const unit = question.unit;
