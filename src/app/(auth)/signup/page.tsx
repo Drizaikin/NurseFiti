@@ -48,16 +48,17 @@ export default function SignupPage() {
       toast.error('Please fill in all fields');
       return false;
     }
-    if (formData.password.length < 8) {
-      toast.error('Password must be at least 8 characters');
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
       return false;
     }
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
       return false;
     }
-    if (!formData.phone.match(/^(?:254|\+254|0)?([17]\d{8})$/)) {
-      toast.error('Please enter a valid Kenyan phone number');
+    const phoneRegex = /^(?:254|\+254|0)?([17]\d{8})$/;
+    if (!phoneRegex.test(formData.phone)) {
+      toast.error('Please enter a valid Kenyan phone number (e.g., 0712345678)');
       return false;
     }
     return true;
@@ -259,7 +260,8 @@ export default function SignupPage() {
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    placeholder="At least 8 characters"
+                    placeholder="At least 6 characters"
+                    minLength={6}
                     className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal"
                     required
                   />

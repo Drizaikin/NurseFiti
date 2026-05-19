@@ -77,8 +77,8 @@ export default function TutorSignupPage() {
       toast.error('Please fill in all fields');
       return false;
     }
-    if (formData.password.length < 8) {
-      toast.error('Password must be at least 8 characters');
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
       return false;
     }
     if (formData.password !== formData.confirmPassword) {
@@ -328,7 +328,8 @@ export default function TutorSignupPage() {
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      placeholder="At least 8 characters"
+                      placeholder="At least 6 characters"
+                      minLength={6}
                       className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal"
                       required
                     />
