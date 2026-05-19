@@ -20,7 +20,7 @@ export default async function DashboardPage() {
     .from('student_profiles')
     .select('*')
     .eq('id', user.id)
-    .single();
+    .maybeSingle();
 
   // Get today's stats
   const today = new Date().toISOString().split('T')[0];
