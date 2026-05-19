@@ -156,39 +156,43 @@ export default function FlashcardsPage() {
               }}
             >
               {/* Front */}
-              <Card
-                className="absolute inset-0 backface-hidden flex items-center justify-center p-8 bg-gradient-to-br from-teal to-teal-mid text-white"
+              <div
+                className="absolute inset-0"
                 style={{ backfaceVisibility: 'hidden' }}
               >
-                <div className="text-center">
-                  <div className="text-sm font-semibold mb-4 opacity-80">QUESTION</div>
-                  <p className="text-2xl font-syne font-bold leading-relaxed">
-                    {currentCard.front}
-                  </p>
-                  <div className="mt-8 text-sm opacity-60">Click to reveal answer</div>
-                </div>
-              </Card>
+                <Card className="h-full flex items-center justify-center p-8 bg-gradient-to-br from-teal to-teal-mid text-white">
+                  <div className="text-center">
+                    <div className="text-sm font-semibold mb-4 opacity-80">QUESTION</div>
+                    <p className="text-2xl font-syne font-bold leading-relaxed">
+                      {currentCard.front}
+                    </p>
+                    <div className="mt-8 text-sm opacity-60">Click to reveal answer</div>
+                  </div>
+                </Card>
+              </div>
 
               {/* Back */}
-              <Card
-                className="absolute inset-0 backface-hidden flex items-center justify-center p-8 bg-gradient-to-br from-amber to-amber-dark text-white"
+              <div
+                className="absolute inset-0"
                 style={{
                   backfaceVisibility: 'hidden',
                   transform: 'rotateY(180deg)',
                 }}
               >
-                <div className="text-center">
-                  <div className="text-sm font-semibold mb-4 opacity-80">ANSWER</div>
-                  <p className="text-2xl font-syne font-bold leading-relaxed mb-4">
-                    {currentCard.back}
-                  </p>
-                  {currentCard.highlight && (
-                    <div className="mt-6 p-4 bg-white/20 rounded-lg">
-                      <p className="text-lg font-semibold">{currentCard.highlight}</p>
-                    </div>
-                  )}
-                </div>
-              </Card>
+                <Card className="h-full flex items-center justify-center p-8 bg-gradient-to-br from-amber to-amber-dark text-white">
+                  <div className="text-center">
+                    <div className="text-sm font-semibold mb-4 opacity-80">ANSWER</div>
+                    <p className="text-2xl font-syne font-bold leading-relaxed mb-4">
+                      {currentCard.back}
+                    </p>
+                    {currentCard.highlight && (
+                      <div className="mt-6 p-4 bg-white/20 rounded-lg">
+                        <p className="text-lg font-semibold">{currentCard.highlight}</p>
+                      </div>
+                    )}
+                  </div>
+                </Card>
+              </div>
             </div>
           </div>
 
