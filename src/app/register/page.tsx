@@ -35,7 +35,7 @@ export default function RegisterLogin() {
       
       const userRole = data.user?.user_metadata?.role;
       if (userRole === 'tutor') {
-        window.location.href = '/tutor_dashboard.html';
+        router.push('/tutor/dashboard');
       } else {
         router.push('/dashboard');
       }
@@ -68,7 +68,7 @@ export default function RegisterLogin() {
         setError(error.message);
       } else {
         if (role === 'tutor') {
-          window.location.href = '/tutor_dashboard.html';
+          router.push('/tutor/dashboard');
         } else {
           router.push('/dashboard');
         }
