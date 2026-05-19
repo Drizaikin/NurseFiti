@@ -16,15 +16,15 @@ export function Sidebar({ role, streak = 0, xp = 0, level = 1 }: SidebarProps) {
 
   const studentLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { href: '/practice', label: 'Practice', icon: '📝' },
-    { href: '/mock-exam', label: 'Mock Exam', icon: '🎯' },
-    { href: '/flashcards', label: 'Flashcards', icon: '🗂️' },
-    { href: '/analytics', label: 'Analytics', icon: '📈' },
-    { href: '/achievements', label: 'Achievements', icon: '🏆' },
-    { href: '/groups', label: 'Study Groups', icon: '👥' },
-    { href: '/revision-plan', label: 'Revision Plan', icon: '📅' },
-    { href: '/tutors', label: 'Book Tutor', icon: '👨‍🏫' },
-    { href: '/settings', label: 'Settings', icon: '⚙️' },
+    { href: '/dashboard/practice', label: 'Practice', icon: '📝' },
+    { href: '/dashboard/mock-exam', label: 'Mock Exam', icon: '🎯' },
+    { href: '/dashboard/flashcards', label: 'Flashcards', icon: '🗂️' },
+    { href: '/dashboard/analytics', label: 'Analytics', icon: '📈' },
+    { href: '/dashboard/achievements', label: 'Achievements', icon: '🏆' },
+    { href: '/dashboard/groups', label: 'Study Groups', icon: '👥' },
+    { href: '/dashboard/revision-plan', label: 'Revision Plan', icon: '📅' },
+    { href: '/dashboard/tutors', label: 'Book Tutor', icon: '👨‍🏫' },
+    { href: '/dashboard/settings', label: 'Settings', icon: '⚙️' },
   ];
 
   const tutorLinks = [
