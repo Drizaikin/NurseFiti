@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 
 type PracticeMode = 'tutor' | 'timed' | 'weak-drill';
 
-export default function PracticePage() {
+function PracticeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const supabase = createClient();
@@ -391,5 +391,21 @@ export default function PracticePage() {
         </Button>
       </Card>
     </div>
+  );
+}
+
+export default function PracticePage() {
+  return (
+    <Suspense fallback={
+      <div className="space-y-6">
+        <div className="animate-pulse">
+          <div className="h-8 bg-border rounded w-1/3 mb-2"></div>
+          <div className="h-4 bg-border rounded w-1/2"></div>
+        </div>
+        <div className="h-64 bg-border rounded animate-pulse"></div>
+      </div>
+    }>
+      <PracticeContent />
+    </Suspense>
   );
 }
